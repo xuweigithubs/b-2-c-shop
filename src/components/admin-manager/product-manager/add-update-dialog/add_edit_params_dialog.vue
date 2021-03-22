@@ -1,11 +1,11 @@
 <template>
     <div class="paramsDialog">
-        <el-dialog :close-on-click-modal="isModelClose" :before-close="close" title="添加规格参数" :style="dialogStyle" v-if="brandDialogVisible" :visible.sync="brandDialogVisible">
+        <el-dialog :close-on-click-modal="isModelClose" :before-close="close" title="添加规格参数" :style="dialogStyle" v-if="paramsDialogVisible" :visible.sync="paramsDialogVisible">
             <el-form ref="brandForm" :model="form" :rules="rules">
-                <el-form-item label="品牌名称" :label-width="formLabelWidth" prop="name">
+                <el-form-item label="规格参数名称" :label-width="formLabelWidth" prop="name">
                     <el-input v-model="form.name" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="Letter" :label-width="formLabelWidth" prop="letter">
+                <el-form-item label="是否为数字" :label-width="formLabelWidth" prop="letter">
                     <el-input v-model="form.letter" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
@@ -17,17 +17,16 @@
     </div>
 </template>
 <script lang="ts">
-    import {Component, Emit, Prop, Vue} from 'vue-property-decorator'
-    import ApiActions from '@/components/api/api-actions'
-    import $ from "jquery";
-    @Component
-    export default class AddEditParamsDialog extends Vue {
+import {Component, Emit, Prop, Vue} from 'vue-property-decorator'
+import ApiActions from '@/components/api/api-actions'
+import $ from "jquery";
+@Component
+export default class AddEditParamsDialog extends Vue {
         @Prop() params:any;
         private paramData:any={};
-        private brandDialogVisible:boolean=true;
+        private paramsDialogVisible:boolean=true;
         private dialogStyle:any={};
         private isModelClose:boolean=false;
-        private imageUrl:any="";
         private form:any= {
             name: '',
             letter:''
@@ -67,18 +66,17 @@
                 this.form.image="";
                 this.imageUrl="";
             }
-
             this.centerDialog();
         }
 
         @Emit("close")
         private close(){
-            this.brandDialogVisible=false;
+            this.paramsDialogVisible=false;
         }
 
         @Emit("confirm")
         private confirm(){
-            this.brandDialogVisible=false;
+            this.paramsDialogVisible=false;
         }
         //提交表单
         private submitForm(formName) {
@@ -110,7 +108,7 @@
         private centerDialog(){
             this.$nextTick(()=>{
                 let height=$(window).height();
-                let dialogHeight=$(".brandDialog .el-dialog").height();
+                let dialogHeight=$(".paramsDialog .el-dialog").height();
                 this.dialogStyle={
                     top:(height/2-dialogHeight/2)+"px"
                 }
@@ -120,7 +118,7 @@
     }
 </script>
 <style lang="less">
-    .brandDialog{
+    .paramsDialog{
         position:absolute
         width:100%;
         height:100%;

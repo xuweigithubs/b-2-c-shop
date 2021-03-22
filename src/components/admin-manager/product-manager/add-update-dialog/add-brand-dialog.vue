@@ -157,7 +157,7 @@ export default class BrandDialog extends Vue {
             height: 178px;
             display: block;
         }
-   position:absolute
+   position:absolute;
    width:100%;
    height:100%;
    .el-dialog__body{
@@ -170,6 +170,6 @@ export default class BrandDialog extends Vue {
             display: flex;
             justify-content: center;
         }
-   }
+     }
 } 
 </style>
