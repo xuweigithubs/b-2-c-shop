@@ -74,7 +74,7 @@
 import {Component, Vue} from 'vue-property-decorator'
 import {namespace} from 'vuex-class'
 import ApiActions from '@/components/api/api-actions'
-import AddEditDialog from "./add-update-dialog/add-edit-group-dialog.vue";
+import AddEditDialog from "./add-update-dialog/add_edit_params_dialog.vue";
 import $ from "jquery";
 const goodsName=namespace("goods");
 @Component({
@@ -107,6 +107,20 @@ export default class ProductSpecParam extends Vue {
   }
   private handleCurrentChange(){
 
+  }
+  private confirmDelete(){
+
+  }
+  private close(){
+
+  }
+  private confirm(){
+
+
+  }
+
+  private addParams(){
+      this.specDialogVisible=true;
   }
   
 }
