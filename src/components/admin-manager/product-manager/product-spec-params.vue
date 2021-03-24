@@ -88,35 +88,40 @@ export default class ProductSpecParam extends Vue {
   private searchKey:any="";
   private specParamData:Array<any>=new Array<any>();
   private specDialogVisible:boolean=false;
-  private params:any={};
   private currentPage:number=1;
   private pageSize:number=10;
+  private params:any={};
   //创建时调用
   async created(){
-     let apiActions=new ApiActions(this);
-     //获取规格参数列表
-     let result=await apiActions.getSpecByPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specParamData=result.data.rows;
-     this.total=result.data.total;
-     this.$nextTick(()=>{
-        $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
-     })
+      this.reloadData();
   }
-  private handleSizeChange(){
-
+  private async handleSizeChange(pageSize){
+      this.pageSize=pageSize;
+      this.reloadData();
   }
-  private handleCurrentChange(){
-
+  private async handleCurrentChange(currentPage){
+       this.currentPage=currentPage;
+       this.reloadData();
+  }
+  private async reloadData(){
+      let apiActions=new ApiActions(this);
+      //获取规格参数列表
+      let result=await apiActions.getSpecByPage({name:this.searchKey,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+      this.specParamData=result.data.rows;
+      this.total=result.data.total;
+      this.$nextTick(()=>{
+          $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
+      })
   }
   private confirmDelete(){
-
+      this.reloadData();
   }
   private close(){
-
+      this.specDialogVisible=false;
   }
   private confirm(){
-
-
+      this.specDialogVisible=false;
+      this.reloadData();
   }
 
   private addParams(){

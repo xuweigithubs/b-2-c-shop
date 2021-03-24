@@ -99,20 +99,20 @@ export default class CategoryDialog extends Vue {
 }
 </script>
 <style lang="less">
-.categoryDialog{
-   position: absolute;
-   width:100%;
-   height:100%;
-   .el-dialog__body{
-      padding-bottom: 0px;
-   }
-    .el-dialog{
-        width: 40%;
-        margin-top:0px!important;
-        .dialog-footer{
-            display: flex;
-            justify-content: center;
-        }
-   }
-} 
+    .categoryDialog{
+       position: absolute;
+       width:100%;
+       height:100%;
+       .el-dialog__body{
+          padding-bottom: 0px;
+       }
+        .el-dialog{
+            width: 40%;
+            margin-top:0px!important;
+            .dialog-footer{
+                display: flex;
+                justify-content: center;
+            }
+       }
+    }
 </style>

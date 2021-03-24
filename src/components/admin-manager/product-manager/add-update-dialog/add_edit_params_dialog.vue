@@ -1,7 +1,7 @@
 <template>
     <div class="paramsDialog">
         <el-dialog :close-on-click-modal="isModelClose" :before-close="close" title="添加规格参数" :style="dialogStyle" v-if="paramsDialogVisible" :visible.sync="paramsDialogVisible">
-            <el-form ref="brandForm" :model="form" :rules="rules">
+            <el-form ref="paramMainForm" :model="form" :rules="rules">
                 <div class="basicItem">
                     <el-form-item label="规格参数名称" :label-width="formLabelWidth" prop="name">
                         <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -15,22 +15,22 @@
                         <el-input v-model="form.unit" autocomplete="off"></el-input>
                     </el-form-item>
                 </div>
-                <el-form ref="brandForm" id="segmentsForm"  :rules="segmentsRuleForm" :model="segmentsForm.segmentsArray[0]"  v-if="form.numberic" :label-width="formLabelWidth">
+                <el-form ref="segmentsFormRef" id="segmentsForm"  :rules="segmentsRuleForm" :model="segmentsForm.segmentsArray[0]"  v-if="form.numberic" :label-width="formLabelWidth">
                     <div v-for="(item,i) in segmentsForm.segmentsArray" :key="i" style="display: flex">
                         <el-col :span="15">
                             <el-form-item  :label="i==0?'数字参数区间取值':''"
                                            :label-width="formLabelWidth"
                                             prop="from"
                                          >
-                                <el-input  v-model="item.from" size="mini" autocomplete="off"></el-input>
+                                <el-input  v-model.number="item.from" size="mini" autocomplete="off"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col class="line" :span="2">到</el-col>
                         <el-col :span="11">
                             <el-form-item  :label-width="formToWidth" prop="to">
-                                <el-input  v-model="item.to" size="mini" autocomplete="off"></el-input>
-                                <i class="el-icon-plus" @click="addSegment" style="cursor:pointer"></i>
-                                <i class="el-icon-delete" @click="deleteSegment" style="cursor:pointer"></i>
+                                <el-input  v-model.number="item.to" size="mini" autocomplete="off"></el-input>
+                                <i class="el-icon-plus" @click="addSegment(item.index)" style="cursor:pointer"></i>
+                                <i class="el-icon-delete" @click="deleteSegment(item.index)" style="cursor:pointer"></i>
                             </el-form-item>
                         </el-col>
                     </div>
@@ -38,7 +38,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="close">取 消</el-button>
-                <el-button type="primary" @click="confirm()">确 定</el-button>
+                <el-button type="primary" @click="confirmForm()">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -59,7 +59,7 @@ export default class AddEditParamsDialog extends Vue {
         private formToWidth:any="0px"
         private form:any= {
             name: '',
-            numberic:true,
+            numberic:false,
             generic:false,
             searching:false
         }
@@ -69,29 +69,39 @@ export default class AddEditParamsDialog extends Vue {
         //表单校验
         private rules:any={
             name: [
-                { required: true, message: '请输入品牌名称', trigger: 'blur' }
+                { required: true, message: '规格参数名称不能为空', trigger: 'blur' }
             ],
-            numberic:[
-                { required: true, message: '请选者是否为数字', trigger: 'blur' }
+            unit:[
+                { required: true, message: '单位不能为空', trigger: 'blur' }
             ]
         }
         private segmentsRuleForm:any={
             from:[
-                { required: true, message: '输入只能为数字', trigger: 'blur' }
+                {type:'number',message: '区间开始只能为数字', trigger: 'blur' }
             ],
             to:[
-                { required: true, message: '只能输入数字', trigger: 'blur' }
+                {type:'number',message: '区间结束只能为数字', trigger: 'blur' }
             ]
         }
-        private addSegment(){
-            this.segmentsForm.segmentsArray.push({"from":"","to":""})
+        private addSegment(index){
+            this.segmentsForm.segmentsArray.splice(index+1,0,{"from":0,"to":0});
+            this.setIndexForData();
         }
-        private deleteSegment(){
-
+        //删除后也需要加上index
+        private deleteSegment(index){
+            this.segmentsForm.segmentsArray.splice(index,1);
+            this.setIndexForData();
+        }
+        private setIndexForData(){
+            let index=0;
+            this.segmentsForm.segmentsArray.forEach(item=>{
+                item.index=index++;
+            });
         }
         //创建时调用
         async created(){
-            this.segmentsForm.segmentsArray=[{"from":"","to":""}];
+            this.segmentsForm.segmentsArray=[{"from":0,"to":0}];
+            this.setIndexForData();
             this.centerDialog();
         }
 
@@ -99,36 +109,30 @@ export default class AddEditParamsDialog extends Vue {
         private close(){
             this.paramsDialogVisible=false;
         }
-
+        private confirmForm(){
+            (this.$refs["paramMainForm"] as any).validate((paramMainFormValid) => {
+                if (paramMainFormValid) {
+                    (this.$refs["segmentsFormRef"] as any).validate((segmentsFormValid) => {
+                        if (segmentsFormValid) {
+                             this.confirm();
+                        }
+                    });
+                }
+            });
+        }
         @Emit("confirm")
         private confirm(){
             this.paramsDialogVisible=false;
         }
-        //提交表单
-        private submitForm(formName) {
-            (this.$refs[formName] as any).validate((valid) => {
-                if (valid) {
-                    if(this.params.type=="add"){
-
-                    }else{
-
-                    }
-
-                } else {
-                    return false;
-                }
-            });
-        }
         private centerDialog(){
             this.$nextTick(()=>{
-                let height=$(window).height();
-                let dialogHeight=$(".paramsDialog .el-dialog").height();
-                this.dialogStyle={
-                    top:(height/2-dialogHeight/2-40)+"px"
-                }
-            })
+                    let height=$(window).height();
+                    let dialogHeight=$(".paramsDialog .el-dialog").height();
+                    this.dialogStyle={
+                        top:(height/2-dialogHeight/2-40)+"px"
+                    }
+            });
         }
-
     }
 </script>
 <style lang="less">
