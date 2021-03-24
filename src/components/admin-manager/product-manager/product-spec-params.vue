@@ -27,43 +27,47 @@
                         label="规格参数组名">
                 </el-table-column>
                 <el-table-column
-                  prop="name"
-                  label="规格参数名称">
+                      prop="name"
+                      label="规格参数名称">
+                </el-table-column>
+                <el-table-column
+                    prop="unit"
+                    label="单位">
+                </el-table-column>
+                <el-table-column
+                    prop="generic"
+                    :formatter="formatterNumberic"
+                    label="是否为通用">
+                </el-table-column>
+                <el-table-column
+                    prop="searching"
+                    :formatter="formatterNumberic"
+                    label="是否可搜索">
                 </el-table-column>
                 <el-table-column
                         prop="numberic"
-                        label="是否为数字">
+                        label="是否为数字"
+                        :formatter="formatterNumberic"
+                >
                 </el-table-column>
                 <el-table-column
-                        prop="unit"
-                        label="单位">
-                </el-table-column>
-                <el-table-column
-                        prop="generic"
-                        label="是否为通用">
-                </el-table-column>
-                <el-table-column
-                        prop="searching"
-                        label="是否可搜索">
-                </el-table-column>
-                <el-table-column
-                        prop="segments"
-                        width="200"
-                        label="数字参数取值区间">
+                    prop="segments"
+                    width="200"
+                    label="数字参数取值区间">
                 </el-table-column>
                <el-table-column label="操作">
                   <template slot-scope="scope">
                   <el-button
                      icon="el-icon-edit"
-                     @click="updateGroup(scope.$index, scope.row)">编辑</el-button>
+                     @click="updateParams(scope.$index, scope.row)">编辑</el-button>
                   </template>
                </el-table-column>
             </el-table>
             <el-pagination
                @size-change="handleSizeChange"
                @current-change="handleCurrentChange"
-               :page-sizes="[10,100, 200, 300, 400]"
-               :page-size="10"
+               :page-sizes="[5,10,100, 200, 300, 400]"
+               :page-size="5"
                layout="total, sizes, prev, pager, next, jumper"
                :total="total">
             </el-pagination>
@@ -89,7 +93,7 @@ export default class ProductSpecParam extends Vue {
   private specParamData:Array<any>=new Array<any>();
   private specDialogVisible:boolean=false;
   private currentPage:number=1;
-  private pageSize:number=10;
+  private pageSize:number=5;
   private params:any={};
   //创建时调用
   async created(){
@@ -97,11 +101,11 @@ export default class ProductSpecParam extends Vue {
   }
   private async handleSizeChange(pageSize){
       this.pageSize=pageSize;
-      this.reloadData();
+      await this.reloadData();
   }
   private async handleCurrentChange(currentPage){
        this.currentPage=currentPage;
-       this.reloadData();
+       await this.reloadData();
   }
   private async reloadData(){
       let apiActions=new ApiActions(this);
@@ -113,18 +117,73 @@ export default class ProductSpecParam extends Vue {
           $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
       })
   }
-  private confirmDelete(){
-      this.reloadData();
+  private updateParams(index,row){
+      this.params.isUpdate=true;
+      let sementsArrayStr=row.segments.split(";");
+      let sementsArray=new Array<any>();
+      sementsArrayStr.forEach(item=>{
+          let sementItem=item.split("-")
+          sementsArray.push({from:sementItem[0],to:sementItem[1]});
+      })
+      this.params.form={
+          id:row.id,
+          name: row.name,
+          numberic:row.numberic,
+          generic:row.generic,
+          unit:row.unit,
+          searching:row.searching,
+          segmentsArray:sementsArray
+      }
+      this.specDialogVisible=true;
   }
+  private formatterNumberic(row, column, cellValue, index){
+        if(cellValue){
+            return "是"
+        }
+        return  "否";
+  }
+    private confirmDelete(){
+        let specParamTable:any=this.$refs.specParamTable;
+        let selectData:Array<any>=specParamTable.selection;
+        if(selectData.length==0){
+            this.$alert('请选择数据', '提示', {
+                confirmButtonText: '确定'
+            });
+            return false;
+        }
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(async () => {
+            await this.deleteParams(selectData);
+            this.$message({
+                type: 'success',
+                message: '删除成功!',
+                center:true
+            });
+        }).catch(() => {
+        });
+    }
   private close(){
       this.specDialogVisible=false;
   }
-  private confirm(){
+  private async deleteParams(selectData){
+      let apiActions=new ApiActions(this);
+      let ids:Array<any>=new Array<any>();
+      selectData.forEach(item=>{
+          ids.push(item.id);
+      })
+      await  apiActions.deleteParams(ids);
+      await this.reloadData();
+  }
+  private async confirm(){
       this.specDialogVisible=false;
-      this.reloadData();
+      await this.reloadData();
   }
 
   private addParams(){
+      this.params.isUpdate=false;
       this.specDialogVisible=true;
   }
   

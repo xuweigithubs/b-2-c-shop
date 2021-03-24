@@ -7,16 +7,16 @@
                         <el-input v-model="form.name" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item  style="margin-left:0px!important;" :label-width="formLabelWidth" prop="generic">
-                        <el-switch inactive-text="是否通用规格" v-model="form.generic"></el-switch>
-                        <el-switch style="margin-left:30px" inactive-text="是否可搜索" v-model="form.searching"></el-switch>
-                        <el-switch inactive-text="是否为数字" style="margin-left:30px"  v-model="form.numberic"></el-switch>
+                        <el-switch  active-text="是否通用规格" v-model="form.generic"></el-switch>
+                        <el-switch  style="margin-left:30px" active-text="是否可搜索" v-model="form.searching"></el-switch>
+                        <el-switch  active-text="是否为数字" style="margin-left:30px"  v-model="form.numberic"></el-switch>
                     </el-form-item>
                     <el-form-item label="单位"  v-if="form.numberic"  :label-width="formLabelWidth" prop="unit">
                         <el-input v-model="form.unit" autocomplete="off"></el-input>
                     </el-form-item>
                 </div>
-                <el-form ref="segmentsFormRef" id="segmentsForm"  :rules="segmentsRuleForm" :model="segmentsForm.segmentsArray[0]"  v-if="form.numberic" :label-width="formLabelWidth">
-                    <div v-for="(item,i) in segmentsForm.segmentsArray" :key="i" style="display: flex">
+                <el-form ref="segmentsFormRef" id="segmentsForm"  :rules="segmentsRuleForm" :model="form.segmentsArray[0]"  v-if="form.numberic" :label-width="formLabelWidth">
+                    <div v-for="(item,i) in form.segmentsArray" :key="i" style="display: flex">
                         <el-col :span="15">
                             <el-form-item  :label="i==0?'数字参数区间取值':''"
                                            :label-width="formLabelWidth"
@@ -61,11 +61,9 @@ export default class AddEditParamsDialog extends Vue {
             name: '',
             numberic:false,
             generic:false,
-            searching:false
-        }
-        private segmentsForm={
+            searching:false,
             segmentsArray:[]
-        };
+        }
         //表单校验
         private rules:any={
             name: [
@@ -84,23 +82,27 @@ export default class AddEditParamsDialog extends Vue {
             ]
         }
         private addSegment(index){
-            this.segmentsForm.segmentsArray.splice(index+1,0,{"from":0,"to":0});
+            this.form.segmentsArray.splice(index+1,0,{"from":0,"to":0});
             this.setIndexForData();
         }
         //删除后也需要加上index
         private deleteSegment(index){
-            this.segmentsForm.segmentsArray.splice(index,1);
+            this.form.segmentsArray.splice(index,1);
             this.setIndexForData();
         }
         private setIndexForData(){
             let index=0;
-            this.segmentsForm.segmentsArray.forEach(item=>{
+            this.form.segmentsArray.forEach(item=>{
                 item.index=index++;
             });
         }
         //创建时调用
         async created(){
-            this.segmentsForm.segmentsArray=[{"from":0,"to":0}];
+            if(this.params.isUpdate){
+                this.form=this.params.form;
+            }else{
+                this.form.segmentsArray=[{"from":0,"to":0}];
+            }
             this.setIndexForData();
             this.centerDialog();
         }
@@ -109,21 +111,39 @@ export default class AddEditParamsDialog extends Vue {
         private close(){
             this.paramsDialogVisible=false;
         }
-        private confirmForm(){
-            (this.$refs["paramMainForm"] as any).validate((paramMainFormValid) => {
+        private async confirmForm(){
+            (this.$refs["paramMainForm"] as any).validate((paramMainFormValid) =>{
                 if (paramMainFormValid) {
-                    (this.$refs["segmentsFormRef"] as any).validate((segmentsFormValid) => {
+                    if(!this.$refs["segmentsFormRef"]){
+                        this.saveParams(this.form);
+                        return false;
+                    }
+                    (this.$refs["segmentsFormRef"] as any).validate((segmentsFormValid) =>{
                         if (segmentsFormValid) {
-                             this.confirm();
+                             this.saveParams(this.form);
                         }
                     });
                 }
             });
         }
+        private async saveParams(params:any){
+            let apiActions=new ApiActions(this);
+            let segments="";
+            if(params.segmentsArray.length>0&&params.numberic){
+                params.segmentsArray.forEach(item=>{
+                    segments=segments+item.from+"-"+item.to+";"
+                });
+                segments=segments.slice(0,segments.length-1);
+            }
+            params.segments=segments;
+            await apiActions.saveParams(params);
+            await this.confirm();
+        }
         @Emit("confirm")
         private confirm(){
             this.paramsDialogVisible=false;
         }
+        //保存数据
         private centerDialog(){
             this.$nextTick(()=>{
                     let height=$(window).height();

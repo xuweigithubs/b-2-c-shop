@@ -46,8 +46,8 @@
             <el-pagination
                @size-change="handleSizeChange"
                @current-change="handleCurrentChange"
-               :page-sizes="[10,100, 200, 300, 400]"
-               :page-size="10"
+               :page-sizes="[5,10,100, 200, 300, 400]"
+               :page-size="5"
                layout="total, sizes, prev, pager, next, jumper"
                :total="total">
             </el-pagination>
@@ -77,7 +77,7 @@ export default class ProductBrand extends Vue {
   private formLabelWidth:any='120px'
   private params:any={};
   private currentPage:number=1;
-  private pageSize:number=10;
+  private pageSize:number=5;
   private isSHowSelectCategory:boolean=false;
   private dialogStyle:any={};
   //创建时调用
