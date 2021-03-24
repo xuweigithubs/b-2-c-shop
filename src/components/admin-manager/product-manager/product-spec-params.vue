@@ -75,7 +75,7 @@
    </div>
 </template>
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
+import {Component, Vue,Watch} from 'vue-property-decorator'
 import {namespace} from 'vuex-class'
 import ApiActions from '@/components/api/api-actions'
 import AddEditDialog from "./add-update-dialog/add_edit_params_dialog.vue";
@@ -123,7 +123,7 @@ export default class ProductSpecParam extends Vue {
       let sementsArray=new Array<any>();
       sementsArrayStr.forEach(item=>{
           let sementItem=item.split("-")
-          sementsArray.push({from:sementItem[0],to:sementItem[1]});
+          sementsArray.push({from:Number(sementItem[0]),to:Number(sementItem[1])});
       })
       this.params.form={
           id:row.id,
@@ -181,7 +181,10 @@ export default class ProductSpecParam extends Vue {
       this.specDialogVisible=false;
       await this.reloadData();
   }
-
+    @Watch("searchKey")
+    private async searchByKey(searchText:any){
+        await this.reloadData();
+    }
   private addParams(){
       this.params.isUpdate=false;
       this.specDialogVisible=true;

@@ -136,7 +136,12 @@ export default class AddEditParamsDialog extends Vue {
                 segments=segments.slice(0,segments.length-1);
             }
             params.segments=segments;
-            await apiActions.saveParams(params);
+            if(this.params.isUpdate){
+                await apiActions.updateParams(params);
+            }else{
+                await apiActions.saveParams(params);
+            }
+
             await this.confirm();
         }
         @Emit("confirm")
