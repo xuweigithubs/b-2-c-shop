@@ -98,6 +98,7 @@ export default class AddEditParamsDialog extends Vue {
         }
         //创建时调用
         async created(){
+            this.form.cid=this.params.categoryId;
             if(this.params.isUpdate){
                 this.form=this.params.form;
             }else{

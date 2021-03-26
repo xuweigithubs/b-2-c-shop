@@ -1,7 +1,7 @@
 <template>
    <div class="productSpec">
            <add-edit-dialog :params="params" @close="close" @confirm="confirm" v-if="specDialogVisible"/>
-           <select-spec-group :params="params"  @close="close" v-if="isShowselectSpecGroup"/>
+           <select-spec-group :params="params"  @close="close" @confirmSelect="confirmSelect" v-if="isShowselectSpecGroup"/>
            <div class="mainSpec">
                <div class="left">
                    <select-category @onSelect="onSelect" :params="selectParams"/>
@@ -17,7 +17,7 @@
                                  v-model="searchKey">
                        </el-input>
                    </div>
-                   <div class="productSpecParamTable">
+                   <div class="productSpecParamTable" v-if="isShowProductSpecParamTable">
                        <el-table
                                ref="specParamTable"
                                tooltip-effect="dark"
@@ -109,6 +109,8 @@ export default class ProductSpecParam extends Vue {
       private pageSize:number=5;
       private params:any={};
       private selectParams:any={isHiddenNext:true}
+      private isShowProductSpecParamTable:boolean=true;
+      private categoryId:any="";
       //创建时调用
       async created(){
           this.reloadData();
@@ -122,13 +124,19 @@ export default class ProductSpecParam extends Vue {
            await this.reloadData();
       }
       public onSelect(categoryId:any){
-           debugger;
            this.params.categoryId=categoryId;
+           this.categoryId=categoryId;
+           localStorage.setItem("selectGroup_categoryId",categoryId);
+           this.reloadData();
+           this.isShowProductSpecParamTable=false;
+           this.$nextTick(()=>{
+                this.isShowProductSpecParamTable=true;
+           })
       }
       private async reloadData(){
           let apiActions=new ApiActions(this);
           //获取规格参数列表
-          let result=await apiActions.getSpecByPage({name:this.searchKey,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+          let result=await apiActions.getSpecByPage({ cid:this.categoryId?this.categoryId:localStorage.getItem("selectGroup_categoryId"),name:this.searchKey,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
           this.specParamData=result.data.rows;
           this.total=result.data.total;
           this.$nextTick(()=>{
@@ -214,6 +222,21 @@ export default class ProductSpecParam extends Vue {
           let selectData:Array<any>=specParamTable.selection;
           this.isShowselectSpecGroup=true;
       }
+      //确定关联
+    confirmSelect(selectRow:any){
+          debugger;
+         let apiActions=new ApiActions(this);
+         let ids:Array<any>=new Array<any>();
+         let specParamTable:any=this.$refs.specParamTable;
+         let selectData:Array<any>=specParamTable.selection;
+         selectData.forEach(item=>{
+             ids.push(item.id);
+         });
+         this.isShowselectSpecGroup=false;
+         debugger;
+         apiActions.updateParamsByIds({groupId:selectRow.id,specParamIds:ids});
+         this.reloadData();
+     }
   
 }
 </script>

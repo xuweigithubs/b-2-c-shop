@@ -96,5 +96,10 @@ export default class ApiActions {
         let result:any=await axios.post('mshop/api/gataway/manager/spec/params/update',params);
         return result;
     }
+    //根据ids修改
+    async updateParamsByIds(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/spec/params/updateByIds',params);
+        return result;
+    }
 }
 

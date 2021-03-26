@@ -12,10 +12,10 @@
                 <el-table
                         ref="specGroupTable"
                         tooltip-effect="dark"
+                        @current-change="handleCurrentChange"
+                        highlight-current-row
                         :data="selectSpecGroupData"
                 >
-                    <el-table-column type="selection">
-                    </el-table-column>
                     <el-table-column
                             prop="name"
                             label="参数组名称">
@@ -24,7 +24,7 @@
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="close">取 消</el-button>
-                <el-button type="primary" @click="corfirmSelect()">确 定</el-button>
+                <el-button type="primary" @click="confirm()">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -44,11 +44,12 @@
         private selectSpecGroupDialogVisible:boolean=true;
         private selectSpecGroupData:Array<any>=new Array<any>();
         private dialogStyle:any={};
+        private currentRow:any="";
         private searchKey:any="";
         async created(){
              let apiActions=new ApiActions(this);
              if(this.params&&this.params.categoryId){
-                 let groupDatas:any=await apiActions.getSpecGroup(this.params.categoryId);
+                 let groupDatas:any=await apiActions.getSpecGroup({cid:this.params.categoryId});
                  this.selectSpecGroupData=groupDatas.data;
              }
         }
@@ -56,12 +57,28 @@
         private close(){
             this.selectSpecGroupDialogVisible=false;
         }
+        private confirm(){
+            let row=this.currentRow;
+            this.confirmSelect(row);
+        }
         //确认选中
-        private corfirmSelect(){
-            this.selectSpecGroupDialogVisible=false;
+        @Emit("confirmSelect")
+        private async confirmSelect(row){
+            return row;
         }
         mounted(){
             this.centerDialog();
+        }
+        @Watch("searchKey")
+        private async searchByKey(searchText:any){
+            let apiActions=new ApiActions(this);
+            if(this.params&&this.params.categoryId){
+                let groupDatas:any=await apiActions.getSpecGroup({cid:this.params.categoryId,name:this.searchKey});
+                this.selectSpecGroupData=groupDatas.data;
+            }
+        }
+        private handleCurrentChange(val){
+            this.currentRow=val;
         }
         private centerDialog(){
             this.$nextTick(()=>{
@@ -76,5 +93,10 @@
 </script>
 
 <style lang="less">
-
+    .selectSpecGroupDialog{
+        .el-dialog__body{
+            max-height: 200px;
+            overflow: auto;
+        }
+    }
 </style>
