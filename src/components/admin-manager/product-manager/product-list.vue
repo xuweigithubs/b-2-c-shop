@@ -71,92 +71,22 @@ export default class ProductSpecGroup extends Vue {
   private isShowGroup:boolean=false;
   //创建时调用
   async created(){
-     let apiActions=new ApiActions(this);
-     let result=await apiActions.getSpecGroupPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
-     this.total=result.data.total;
-     this.$nextTick(()=>{
-        $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
-     })
+
   }
   //分页发生变化
   private async handleSizeChange(pageSize){
-     this.pageSize=pageSize;
-     let apiActions=new ApiActions(this);
-     let result=await apiActions.getSpecGroupPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
+
   }
   //当前页发生变化
-  private async handleCurrentChange(currentPage){
-     this.currentPage=currentPage;
-     let apiActions=new ApiActions(this);
-     let result=await apiActions.getSpecGroupPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
-  }
-  //添加分组
-  private addGroup(){
-      this.specGroupDialogVisible = true;
-  }
-  //编辑分组
-  private updateGroup(index,item){
-      localStorage.setItem("categoryId",item.cid);
-      this.specGroupDialogVisible = true;
-  }
-  private confirmDelete(){
-     let specGroupTable:any=this.$refs.specGroupTable;
-     let selectData:Array<any>=specGroupTable.selection;
-     if(selectData.length==0){
-        this.$alert('请选择数据', '提示', {
-          confirmButtonText: '确定'
-        });
-        return false;
-     }
-     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async () => {
-          await this.deleteGroup();
-          this.$message({
-            type: 'success',
-            message: '删除成功!',
-            center:true
-          });
-         }).catch(() => {
-        });
-  }
-  //删除分组
-  private async deleteGroup(){
-     let specGroupTable:any=this.$refs.specGroupTable;
-     let selectData:Array<any>=specGroupTable.selection;
-     let apiActions=new ApiActions(this);
-     let ids:any=selectData.map(item=>{
-        return item.id;
-     });
-     apiActions.deleteSpecGroup(ids);
-     let result=await apiActions.getSpecGroupPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
-     this.total=result.data.total;
-  }
+   private async handleCurrentChange(currentPage){
+
+   }
   //关闭
-  private close(){
-     this.specGroupDialogVisible = false;
-  }
-  //确认数据
-  private async confirm(){
-     this.specGroupDialogVisible = false;
-     let apiActions=new ApiActions(this);
-     let result=await apiActions.getSpecGroupPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
-     this.total=result.data.total;
-  }
+   private close(){
+       this.specGroupDialogVisible = false;
+   }
    @Watch("searchKey")
    private async searchByKey(searchText:any){
-     console.log("searchText",searchText);
-     let apiActions=new ApiActions(this);
-     let result=await apiActions.getSpecGroupPage({name:searchText,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
-     this.specGroupData=result.data.rows;
-     this.total=result.data.total;
   }
  
 }
@@ -165,34 +95,8 @@ export default class ProductSpecGroup extends Vue {
 .productManager{
    width:100%;
    height:100%;
-    .el-dialog{
-        width: 40%;
-        margin-top:0px!important;
-        .dialog-footer{
-            display: flex;
-            justify-content: center;
-        }
-   }
-   .el-table__body-wrapper{
-       overflow-y: auto;
-       height: calc(100% - 70px);
-   }
-   .has-gutter .el-table-column--selection .cell{
-      padding-left:14px!important;
-   }
-   border:soild 1px red;
-   .butons{
-      display: flex;
-      flex-direction:row;
-   }
-   .productSpecGroupTable{
-      height: calc(100% - 40px);
-      .el-table{
-         height: calc(100% - 40px);
-      }
-      .el-pagination{
-         margin-top: 12px;
-      }
-   }
+    .buttons{
+        display: flex;
+    }
 } 
 </style>

@@ -223,8 +223,7 @@ export default class ProductSpecParam extends Vue {
           this.isShowselectSpecGroup=true;
       }
       //确定关联
-    confirmSelect(selectRow:any){
-          debugger;
+   async confirmSelect(selectRow:any){
          let apiActions=new ApiActions(this);
          let ids:Array<any>=new Array<any>();
          let specParamTable:any=this.$refs.specParamTable;
@@ -233,9 +232,8 @@ export default class ProductSpecParam extends Vue {
              ids.push(item.id);
          });
          this.isShowselectSpecGroup=false;
-         debugger;
-         apiActions.updateParamsByIds({groupId:selectRow.id,specParamIds:ids});
-         this.reloadData();
+         await apiActions.updateParamsByIds({groupId:selectRow.id,specParamIds:ids});
+         await this.reloadData();
      }
   
 }

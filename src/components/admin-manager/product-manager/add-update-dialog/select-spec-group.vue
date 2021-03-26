@@ -51,6 +51,10 @@
              if(this.params&&this.params.categoryId){
                  let groupDatas:any=await apiActions.getSpecGroup({cid:this.params.categoryId});
                  this.selectSpecGroupData=groupDatas.data;
+             }else{
+                 let selectGroupCategoryId=localStorage.getItem("selectGroup_categoryId");
+                 let groupDatas:any=await apiActions.getSpecGroup({cid:selectGroupCategoryId});
+                 this.selectSpecGroupData=groupDatas.data;
              }
         }
         @Emit("close")

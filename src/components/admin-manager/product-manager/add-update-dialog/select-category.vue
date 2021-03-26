@@ -136,11 +136,16 @@ export default class SelectCategory extends Vue {
                 justify-content: center;
             }
        }
+
       .el-table .warning-row {
         background: oldlace;
       }
       .el-table .success-row {
         background: #f0f9eb;
       }
+    .el-table::before {
+        height: 0px;
+    }
+
     }
 </style>
