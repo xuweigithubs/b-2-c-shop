@@ -1,7 +1,7 @@
 <template>
    <div class="productSpecGroup">
-        <add-edit-dialog :params="params" @close="close" @confirm="confirm" v-if="specGroupDialogVisible"/>
-        <div class="butons"> 
+         <add-edit-dialog :params="params" @close="close" @confirm="confirm" v-if="specGroupDialogVisible"/>
+         <div class="butons">
             <el-button icon="el-icon-plus" @click="addGroup"> 添加</el-button>
             <el-button icon="el-icon-delete" @click="confirmDelete">删除</el-button>
             <el-button icon="el-icon-delete" @click="confirmDelete">关联规格参数</el-button>
@@ -79,8 +79,8 @@ export default class ProductSpecGroup extends Vue {
      this.specGroupData=result.data.rows;
      this.total=result.data.total;
      this.$nextTick(()=>{
-        $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
-     })
+          $(".el-table th.el-table_1_column_1>.cell").css({'padding-left':'14px!important'});
+      })
   }
   //分页发生变化
   private async handleSizeChange(pageSize){

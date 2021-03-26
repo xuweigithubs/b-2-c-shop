@@ -22,16 +22,12 @@
                   prop="name"
                   label="分类名称">
                </el-table-column>
-                <el-table-column
-                  prop="sort"
-                  label="排序">
-                </el-table-column>
           </el-table>
-          <el-button type="primary" style="max-width:80px;margin-top:20px;margin-bottom:20px;" @click="goNext()">下一步</el-button>
+          <el-button type="primary" v-if="!isHiddenNext" style="max-width:80px;margin-top:20px;margin-bottom:20px;" @click="goNext()">下一步</el-button>
    </div>
 </template>
 <script lang="ts">
-import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
+import {Component, Prop, Vue, Watch,Emit} from 'vue-property-decorator'
 import {namespace} from 'vuex-class'
 import ApiActions from '@/components/api/api-actions'
 import TreeUtils from '@/components/common/tree-utils';
@@ -50,8 +46,12 @@ export default class SelectCategory extends Vue {
   private orgProductCategoryData=new Array<any>();
   private searchKey:any="";
   private currentRow:any="";
+  private isHiddenNext:any=false;
   //创建时调用
   async created(){
+        if(this.params&&this.params.isHiddenNext){
+            this.isHiddenNext=this.params.isHiddenNext;
+        }
         let apiActions=new ApiActions(this);
         let result=await apiActions.getCategories({name:""})
         this.productCategoryData=result.data;
@@ -72,7 +72,9 @@ export default class SelectCategory extends Vue {
       let fatherItems=new Array<any>();
       TreeUtils.addFather(searchResult,fatherItems,currentItem); 
       for(let i=fatherItems.length-1;i>=0;i--){
-        (this.$refs.treeTable as any).toggleRowExpansion(fatherItems[i],true);
+          if(this.$refs.treeTable){
+              (this.$refs.treeTable as any).toggleRowExpansion(fatherItems[i],true);
+          }
       }
   }
   @Watch("searchKey")
@@ -95,10 +97,16 @@ export default class SelectCategory extends Vue {
   private getRowKey(row){
     return row.id;
   }
+
   private handleCurrentChange(val){
      localStorage.setItem("categoryId",val.id);
      this.currentRow=val;
-     this.updateState({categoryId:val.id})
+     this.updateState({categoryId:val.id});
+     this.onSelect(val.id);
+  }
+  @Emit("onSelect")
+  private onSelect(categoryId){
+      return categoryId;
   }
   private tableRowClassName({row, rowIndex}){
      let categoryId:any=localStorage.getItem("categoryId");
@@ -110,29 +118,29 @@ export default class SelectCategory extends Vue {
 }
 </script>
 <style lang="less">
-.selectCategory{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  .el-table__body-wrapper{
-        overflow-y: auto;
-   }
-   width:100%;
-   height:100%;
-  .el-dialog{
-        width: 40%;
-        margin-top:0px!important;
-       
-        .dialog-footer{
-            display: flex;
-            justify-content: center;
-        }
-   }
-  .el-table .warning-row {
-    background: oldlace;
-  }
-  .el-table .success-row {
-    background: #f0f9eb;
-  }
-} 
+    .selectCategory{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+      .el-table__body-wrapper{
+            overflow-y: auto;
+       }
+       width:100%;
+       height:100%;
+      .el-dialog{
+            width: 40%;
+            margin-top:0px!important;
+
+            .dialog-footer{
+                display: flex;
+                justify-content: center;
+            }
+       }
+      .el-table .warning-row {
+        background: oldlace;
+      }
+      .el-table .success-row {
+        background: #f0f9eb;
+      }
+    }
 </style>

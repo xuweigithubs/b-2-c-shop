@@ -94,7 +94,9 @@ export default class ProductCategory extends Vue {
             let fatherItems=new Array<any>();
             TreeUtils.addFather(searchResult,fatherItems,currentItem); 
             for(let i=fatherItems.length-1;i>=0;i--){
-                 (this.$refs.treeTable as any).toggleRowExpansion(fatherItems[i],true);
+                 if(this.$refs.treeTable){
+                     (this.$refs.treeTable as any).toggleRowExpansion(fatherItems[i],true);
+                 }
             }
       }
       @Watch("searchKey")

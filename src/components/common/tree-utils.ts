@@ -81,7 +81,7 @@ export default class TreeUtils{
      }
      public static toggleRowExpansion_forAll(data,isExpansion,vm,expandAll?,expandId?){
         data.forEach(item=>{
-           (vm.$refs.treeTable as any).toggleRowExpansion(item,isExpansion);
+            (vm.$refs.treeTable as any)&&(vm.$refs.treeTable as any).toggleRowExpansion(item,isExpansion);
            if(item.children != undefined && item.children != null){
               this.toggleRowExpansion_forAll(item.children,isExpansion,vm);
            }
