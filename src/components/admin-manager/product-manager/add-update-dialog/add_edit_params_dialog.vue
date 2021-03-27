@@ -59,6 +59,7 @@ export default class AddEditParamsDialog extends Vue {
         private formToWidth:any="0px"
         private form:any= {
             name: '',
+            cid:'',
             numberic:false,
             generic:false,
             searching:false,
@@ -142,7 +143,6 @@ export default class AddEditParamsDialog extends Vue {
             }else{
                 await apiActions.saveParams(params);
             }
-
             await this.confirm();
         }
         @Emit("confirm")

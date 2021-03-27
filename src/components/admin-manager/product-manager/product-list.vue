@@ -1,7 +1,7 @@
 <template>
    <div class="productManager">
         <add-edit-dialog :params="params" @close="close" @confirm="confirm" v-if="specGroupDialogVisible"/>
-        <div class="butons"> 
+        <div class="buttons">
             <el-button icon="el-icon-plus" @click="addGroup"> 添加</el-button>
             <el-button icon="el-icon-delete" @click="confirmDelete">删除</el-button>
             <el-input style="flex:1;margin-left:300px"
@@ -20,13 +20,16 @@
                </el-table-column>
                  <el-table-column
                   prop="name"
-                  label="参数组名称">
+                  label="商品名称">
                </el-table-column>
                 <el-table-column
                   prop="categoryName"
-                  label="分类名称">
-               </el-table-column>
-               
+                  label="商品分类">
+                </el-table-column>
+                <el-table-column
+                        prop="categoryName"
+                        label="商品品牌">
+                </el-table-column>
                <el-table-column label="操作">
                   <template slot-scope="scope">
                   <el-button
@@ -58,17 +61,16 @@ const goodsName=namespace("goods");
      AddEditDialog
   },
 })
-export default class ProductSpecGroup extends Vue {
+export default class ProductList extends Vue {
   @goodsName.Mutation updateStatus;
   private total:any=0;
   private searchKey:any="";
-  private specGroupData:Array<any>=new Array<any>();
-  private specGroupDialogVisible:boolean=false;
+  private productListData:Array<any>=new Array<any>();
+  private productDialogVisible:boolean=false;
   private formLabelWidth:any='120px'
   private params:any={};
   private currentPage:number=1;
   private pageSize:number=10;
-  private isShowGroup:boolean=false;
   //创建时调用
   async created(){
 
@@ -83,7 +85,6 @@ export default class ProductSpecGroup extends Vue {
    }
   //关闭
    private close(){
-       this.specGroupDialogVisible = false;
    }
    @Watch("searchKey")
    private async searchByKey(searchText:any){
