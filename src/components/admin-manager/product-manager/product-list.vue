@@ -1,8 +1,8 @@
 <template>
    <div class="productManager">
-        <add-edit-dialog :params="params" @close="close" @confirm="confirm" v-if="specGroupDialogVisible"/>
+        <add-product-dialog :params="params" @close="close" @confirm="confirm" v-if="productDialogVisible"/>
         <div class="buttons">
-            <el-button icon="el-icon-plus" @click="addGroup"> 添加</el-button>
+            <el-button icon="el-icon-plus" @click="addProduct">添加</el-button>
             <el-button icon="el-icon-delete" @click="confirmDelete">删除</el-button>
             <el-input style="flex:1;margin-left:300px"
                 placeholder="请输入名称搜索"
@@ -14,7 +14,7 @@
             <el-table
                ref="specGroupTable"
                tooltip-effect="dark"
-               :data="specGroupData"
+               :data="spus"
                >
                <el-table-column type="selection">
                </el-table-column>
@@ -53,12 +53,12 @@
 import {Component, Vue, Watch} from 'vue-property-decorator'
 import {namespace} from 'vuex-class'
 import ApiActions from '@/components/api/api-actions'
-import AddEditDialog from "./add-update-dialog/add-edit-group-dialog.vue";
+import AddProductDialog from "./product/add-product-dialog.vue";
 import $ from "jquery";
 const goodsName=namespace("goods");
 @Component({
   components: {
-     AddEditDialog
+      AddProductDialog
   },
 })
 export default class ProductList extends Vue {
@@ -71,6 +71,7 @@ export default class ProductList extends Vue {
   private params:any={};
   private currentPage:number=1;
   private pageSize:number=10;
+  private spus:any=new Array<any>();
   //创建时调用
   async created(){
 
@@ -85,10 +86,23 @@ export default class ProductList extends Vue {
    }
   //关闭
    private close(){
+      this.productDialogVisible=false;
    }
+
    @Watch("searchKey")
    private async searchByKey(searchText:any){
-  }
+
+   }
+
+   private addProduct(){
+       this.productDialogVisible=true;
+   }
+   private confirmDelete(){
+
+   }
+   private confirm(){
+
+   }
  
 }
 </script>

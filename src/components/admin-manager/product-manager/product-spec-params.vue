@@ -232,7 +232,11 @@ export default class ProductSpecParam extends Vue {
              ids.push(item.id);
          });
          this.isShowselectSpecGroup=false;
-         await apiActions.updateParamsByIds({groupId:selectRow.id,specParamIds:ids});
+         await apiActions.updateParamsByIds(
+             {
+                 groupId:selectRow.id,specParamIds:ids,
+                 cid:this.categoryId?this.categoryId:localStorage.getItem("selectGroup_categoryId")
+             });
          await this.reloadData();
      }
   
