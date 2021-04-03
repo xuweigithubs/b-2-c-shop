@@ -1,4 +1,5 @@
 const state = {
+    addSpuSelectCategoryId:""
 }
 const mutations = {
     updateState(state: any, payload: any) {
@@ -11,4 +12,5 @@ const mutations = {
 export default {
     namespaced: true,
     mutations,
+    state
 }

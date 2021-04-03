@@ -74,7 +74,7 @@ export default class ProductList extends Vue {
   private spus:any=new Array<any>();
   //创建时调用
   async created(){
-
+      let apiActions=new ApiActions(this);
   }
   //分页发生变化
   private async handleSizeChange(pageSize){

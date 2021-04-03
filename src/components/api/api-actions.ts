@@ -59,6 +59,10 @@ export default class ApiActions {
             let result:any=await axios.post('mshop/api/gataway/manager/brand/page/list',params);
             return result;
        }
+        async getBrand(params: any) {
+            let result:any=await axios.post('mshop/api/gataway/manager/brand/list',params);
+            return result;
+        }
       //添加品牌信息
        async addBrand(params: any){
             await axios.post('mshop/api/gataway/manager/brand/add',params);
@@ -101,5 +105,10 @@ export default class ApiActions {
         let result:any=await axios.post('mshop/api/gataway/manager/spec/params/updateByIds',params);
         return result;
     }
+    async getTemplateByCid(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/spec/params/getTemplateByCid',params);
+        return result;
+    }
+
 }
 

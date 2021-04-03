@@ -11,10 +11,10 @@
                 <el-step title="sku信息">
                 </el-step>
             </el-steps>
-            <spu-basic-info v-if="active==0"/>
-            <spu-description v-if="active==1"/>
-            <spu v-if="active==2"/>
-            <sku v-if="active==3"/>
+            <spu-basic-info v-show="active==0"/>
+            <spu-description v-show="active==1"/>
+            <spu v-show="active==2"/>
+            <sku v-show="active==3"/>
             <span slot="footer" class="dialog-footer">
                 <el-button v-if="isShowPre" @click="pre">上一步</el-button>
                 <el-button v-if="isShowNext" @click="next">下一步</el-button>
@@ -26,6 +26,7 @@
 
 <script lang="ts">
     import {Component, Emit, Prop, Vue} from 'vue-property-decorator'
+    import $ from "jquery";
     import Sku from "./sku.vue";
     import Spu from "./spu.vue";
     import SpuBasicInfo from "./spu-basic-info.vue";
@@ -54,15 +55,30 @@
            if(this.active<4){
                this.active++;
            }
+           this.centerDialog();
        }
        private pre(){
            if(this.active>0){
                this.active--;
            }
+           this.centerDialog();
        }
        private confirm(){
            this.close();
        }
+
+        mounted(){
+            this.centerDialog();
+        }
+        private centerDialog(){
+            this.$nextTick(()=>{
+                let height=$(window).height();
+                let dialogHeight=$(".addProductDialog .el-dialog").height();
+                this.dialogStyle={
+                    top:(height/2-dialogHeight/2-100)+"px"
+                }
+            })
+        }
     }
 </script>
 <style lang="less">

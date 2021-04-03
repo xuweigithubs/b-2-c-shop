@@ -99,12 +99,12 @@ export default class AddEditParamsDialog extends Vue {
         }
         //创建时调用
         async created(){
-            this.form.cid=this.params.categoryId?this.params.categoryId:localStorage.getItem("selectGroup_categoryId");
             if(this.params.isUpdate){
                 this.form=this.params.form;
             }else{
                 this.form.segmentsArray=[{"from":0,"to":0}];
             }
+            this.form.cid=this.params.categoryId?this.params.categoryId:localStorage.getItem("selectGroup_categoryId");
             this.setIndexForData();
             this.centerDialog();
         }
