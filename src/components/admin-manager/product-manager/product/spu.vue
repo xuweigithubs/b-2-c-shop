@@ -1,7 +1,7 @@
 <template>
     <div class="spu">
-        <el-form :model="spuForm" :rules="spuFormRule" ref="spuRuleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item v-for="(item,index) in groupParams" :key="index" :label="item.k" prop="name">
+        <el-form :model="item" v-for="(item,index) in groupParams" :key="index" :rules="spuFormRule" ref="spuRuleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item :label="item.k" prop="v">
                 <el-input v-model="item.v"></el-input><span style="margin-left: 5px">{{item.unit}}</span>
             </el-form-item>
         </el-form>
@@ -16,12 +16,15 @@
     @Component
     export default class spu extends Vue{
         @goodsName.State addSpuSelectCategoryId;
-        private groupParams:Array<any>=new Array<any>();
-        private spuForm:any={};
-        private spuFormRule:any={}
+        public groupParams:Array<any>=new Array<any>();
+        private spuFormRule:any={
+            v:[
+                { required: true, message: '通用规格参数不能为空', trigger: 'blur' }
+            ]
+        }
         @Watch("addSpuSelectCategoryId",{deep:true,immediate:true})
         private async addSpuSelectCategoryIdChange(newVal, oldVal){
-             //根据分类查询参数模板
+            //根据分类查询参数模板
             let apiActions=new ApiActions(this);
             let result:any=(await apiActions.getTemplateByCid({categoryId:newVal})).data;
             if(result&&result.length>0) {
@@ -34,6 +37,7 @@
                          return {
                              group:groupData[i].group,
                              k:item.name,
+                             v:'',
                              numberic:item.numberic,
                              generic:item.generic,
                              searching:item.searching,
@@ -53,6 +57,7 @@
                         return {
                             k:item.name,
                             numberic:item.numberic,
+                            v:'',
                             generic:item.generic,
                             searching:item.searching,
                             segments:item.segments,
@@ -64,8 +69,10 @@
                              dataTemp.push(item);
                          }
                      });
-                }
+                };
                 this.groupParams=dataTemp;
+            }else{
+                this.groupParams=[];
             }
         }
     }
@@ -73,14 +80,12 @@
 
 <style lang="less">
     .spu{
+        max-height: 300px!important;
+        overflow: auto!important;;
+        display:flex;
+        flex-wrap: wrap;
         .el-form{
-            max-height: 300px!important;
-            overflow: auto!important;;
-            .el-form-item{
-                width: 33%;
-            }
-            display:flex;
-            flex-wrap:wrap;
+            width: 33%;
             .el-input{
                 width: 80%!important;
             }

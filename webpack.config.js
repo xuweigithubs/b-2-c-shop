@@ -5,7 +5,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: "./src/main.ts",
-    devtool: 'source-map',
     devServer: {
         contentBase: './dist',
         proxy: {
@@ -77,9 +76,10 @@ module.exports = {
             path.resolve(__dirname,'loaders')
         ]
     },
+    devtool: 'inline-source-map',
     plugins: [
         new VueLoaderPlugin(),
-        new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: '管理输出',
             template: path.resolve(__dirname, './template/template.html')

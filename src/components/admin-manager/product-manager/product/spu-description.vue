@@ -1,13 +1,13 @@
 <template>
     <div class="edit_container">
-        <quill-editor
-                v-model="content"
-                ref="myQuillEditor"
-                :options="editorOption"
-                @blur="onEditorBlur($event)"
-                @focus="onEditorFocus($event)"
-                @change="onEditorChange($event)">
-        </quill-editor>
+                <quill-editor
+                        v-model="content"
+                        ref="myQuillEditor"
+                        :options="editorOption"
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @change="onEditorChange($event)">
+                </quill-editor>
     </div>
 </template>
 <script lang="ts">
@@ -16,17 +16,22 @@
     export default class SpuDescription extends Vue{
          private content:any="";
          private editorOption:any={};
+         private descriptionFormRule:any={
+             content:[
+                 { required: true, message: '描述不能为空', trigger: 'blur' }
+             ]
+         }
+         created(){
+         }
+        private contentObj:any={};
         onEditorBlur(quill) {
-            console.log('editor blur!', quill)
         }
         onEditorFocus(quill) {
-            console.log('editor focus!', quill)
         }
         onEditorReady(quill) {
-            console.log('editor ready!', quill)
         }
         onEditorChange({ quill, html, text }) {
-            console.log('editor change!', html)
+            this.content=html;
         }
     }
 </script>

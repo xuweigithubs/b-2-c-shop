@@ -74,15 +74,20 @@ export default class ProductList extends Vue {
   private spus:any=new Array<any>();
   //创建时调用
   async created(){
+      await this.initPageData();
+  }
+  private async initPageData(){
       let apiActions=new ApiActions(this);
+      let result:Array<any>=await apiActions.getSpuListPage({pageSize:10,curPage:1});
+      //this.spus=result;
   }
   //分页发生变化
   private async handleSizeChange(pageSize){
-
+      await this.initPageData();
   }
   //当前页发生变化
    private async handleCurrentChange(currentPage){
-
+       await this.initPageData();
    }
   //关闭
    private close(){

@@ -109,6 +109,16 @@ export default class ApiActions {
         let result:any=await axios.post('mshop/api/gataway/manager/spec/params/getTemplateByCid',params);
         return result;
     }
+    //分页获取商品信息
+    async getSpuListPage(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/goods/page/list',params);
+        return result;
+    }
+    //保存商品信息
+    async saveGood(spuParam:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/goods/save',spuParam);
+        return result;
+    }
 
 }
 

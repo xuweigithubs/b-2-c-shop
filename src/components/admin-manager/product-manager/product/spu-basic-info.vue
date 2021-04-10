@@ -2,11 +2,11 @@
     <div style="max-height: 250px;overflow: auto">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="product-ruleForm">
             <div class="categoryAndBrand">
-                <el-form-item label="商品分类" prop="category">
-                    <el-cascader @change="categoryChange" :options="categories" :show-all-levels="false"></el-cascader>
+                <el-form-item label="商品分类">
+                    <el-cascader @change="categoryChange" :options="categories" v-model="categoryId" :show-all-levels="true"></el-cascader>
                 </el-form-item>
                 <el-form-item label="商品品牌" prop="brand">
-                    <el-select v-model="value" placeholder="请选择">
+                    <el-select v-model="brandId" placeholder="请选择">
                         <el-option
                                 v-for="item in brandItems"
                                 :key="item.value"
@@ -16,7 +16,7 @@
                     </el-select>
                 </el-form-item>
             </div>
-            <el-form-item label="商品名称" prop="title">
+            <el-form-item label="商品名称" :prop="title">
                 <el-input v-model="ruleForm.title"></el-input>
             </el-form-item>
             <el-form-item label="商品卖点" prop="subTitle">
@@ -40,9 +40,10 @@
     @Component
     export default class SpuBasicInfo extends Vue{
         @goodsName.Mutation updateState;
-        @goodsName.State addSpuSelectCategoryId;
-        private ruleForm:any={};
-        private rules:any={
+        private title="title";
+        public categoryId:any="";
+        public ruleForm:any={};
+        public rules:any={
             title: [
                 { required: true, message: '请填写商品名称', trigger: 'blur' }
             ],
@@ -56,7 +57,7 @@
                 { required: true, message: '售后服务不能为空', trigger: 'blur' }
             ]
         };
-        private value:any="";
+        private brandId:any="";
         private categories:Array<any>=new Array<any>();
         //根据分类查询出品牌
         private brandItems:Array<any>=new Array<any>();
@@ -65,18 +66,30 @@
             let categories=await apiActions.getCategories({});
             let categoryResult=this.mapCategory(categories.data);
             this.categories=categoryResult;
+            let currentSelectCategoryIdArray=localStorage.getItem("currentSelectCategoryIdArray");
+            if(currentSelectCategoryIdArray){
+                let categoryIds:Array<any>=currentSelectCategoryIdArray.split(",");
+                this.categoryId=categoryIds;
+                let addSpuSelectCategoryIdResult:any=categoryIds[categoryIds.length-1];
+                this.updateState({addSpuSelectCategoryId:addSpuSelectCategoryIdResult});
+            }else{
+                this.categoryId=["1020","1021","1025"];
+                this.updateState({addSpuSelectCategoryId:"1025"});
+            }
         }
         private async categoryChange(categories:any){
-            let addSpuSelectCategoryId:any=categories[categories.length-1];
-            this.updateState({addSpuSelectCategoryId:addSpuSelectCategoryId});
+            localStorage.setItem("currentSelectCategoryIdArray",categories);
+            let addSpuSelectCategoryIdResult:any=categories[categories.length-1];
+            this.updateState({addSpuSelectCategoryId:addSpuSelectCategoryIdResult});
             let apiActions=new ApiActions(this);
-            let brands=await apiActions.getBrand({cid:addSpuSelectCategoryId});
+            let brands=await apiActions.getBrand({cid:addSpuSelectCategoryIdResult});
             this.brandItems=brands.data.map(item=>{
                 return {
                      value:item.id,
                      label:item.name
                 }
             });
+
         }
         //映射出所有分类
         private mapCategory(categories:Array<any>){
