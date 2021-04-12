@@ -145,7 +145,7 @@
                let index=0;
                let skuTitleStr="";
                for(let key  in item){
-                     if(key!="index"&&key!="isUsed"&&key!="price"&&key!="stock"){
+                     if(key!="index"&&key!="enable"&&key!="price"&&key!="stock"){
                          ownSpec[key]=item[key];
                          skuTitleStr=skuTitleStr+item[key]+" "
                      }
@@ -158,7 +158,7 @@
                    price:item.price,
                    indexes:item.index,
                    ownSpec:JSON.stringify(ownSpec),
-                   enable:true,
+                   enable:item.enable,
                    stockVO:{
                            skuId:"",
                            seckillStock:"",

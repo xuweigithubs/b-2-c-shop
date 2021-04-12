@@ -75,7 +75,7 @@
                             <el-form :model="scope.row" :rules="priceFormRule"  :key="scope.row.index"   ref="isUsedForm">
                                 <el-form-item label-width="20px"  label="">
                                     <el-switch
-                                            v-model="scope.row.isUsed"
+                                            v-model="scope.row.enable"
                                             active-color="#13ce66">
                                     </el-switch>
                                 </el-form-item>

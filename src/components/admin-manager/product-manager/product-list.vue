@@ -19,7 +19,7 @@
                <el-table-column type="selection">
                </el-table-column>
                  <el-table-column
-                  prop="name"
+                  prop="title"
                   label="商品名称">
                </el-table-column>
                 <el-table-column
@@ -70,7 +70,7 @@ export default class ProductList extends Vue {
   private formLabelWidth:any='120px'
   private params:any={};
   private currentPage:number=1;
-  private pageSize:number=10;
+  private pageSize:number=7;
   private spus:any=new Array<any>();
   //创建时调用
   async created(){
@@ -78,15 +78,18 @@ export default class ProductList extends Vue {
   }
   private async initPageData(){
       let apiActions=new ApiActions(this);
-      let result:Array<any>=await apiActions.getSpuListPage({pageSize:10,curPage:1});
-      //this.spus=result;
+      let result:any=await apiActions.getSpuListPage({pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+      this.spus=result.data.rows;
+      this.total=result.data.total;
   }
   //分页发生变化
   private async handleSizeChange(pageSize){
+      this.pageSize=pageSize;
       await this.initPageData();
   }
   //当前页发生变化
    private async handleCurrentChange(currentPage){
+       this.currentPage=currentPage;
        await this.initPageData();
    }
   //关闭
