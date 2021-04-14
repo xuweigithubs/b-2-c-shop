@@ -55,10 +55,12 @@
            this.isShowAddProductDialog=false;
        }
        async created(){
-            let apiActions=new ApiActions(this);
-            let result:any=await apiActions.selectProduct({id:this.params.spuId});
-            this.params.data=result.data;
-            this.isShowSpuDetial=true;
+           if(this.params.spuId){
+               let apiActions=new ApiActions(this);
+               let result:any=await apiActions.selectProduct({id:this.params.spuId});
+               this.params.data=result.data;
+           }
+           this.isShowSpuDetial=true;
        }
        private next(){
            let isValidate=false;

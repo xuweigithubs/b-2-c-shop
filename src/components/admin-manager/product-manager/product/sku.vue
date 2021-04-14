@@ -136,17 +136,18 @@
         private async addSkuSelectCategoryIdChange(newVal, oldVal){
             if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO){
                 let editData:any=JSON.parse(this.params.data.spuDetialVO.specifications);
-                this.groupParams=new Array<any>();
+                let groupParams=new Array<any>();
                 if(editData){
                     editData.groupParams.forEach(item=>{
                         item.params.forEach(paramItem=>{
                             paramItem.group=item.group;
                             if(!paramItem.generic){
-                                this.groupParams.push(paramItem);
+                                groupParams.push(paramItem);
                             }
                         })
                     })
-                }
+                };
+                this.groupParamsChange(groupParams);
             }else{
                 await this.genSkuParams(newVal, oldVal);
             }
@@ -202,7 +203,8 @@
                         }
                     });
                 };
-                this.groupParams=dataTemp;
+                //this.groupParams=dataTemp;
+                this.groupParamsChange(dataTemp);
             }else{
                 this.groupParams=[];
             }
@@ -224,6 +226,7 @@
                      this.genPlusSkuItems(groupParams[i]);
                  }
              }
+             this.groupParams=groupParams;
         }
         genSkuItems(param:any){
             for(let i=0;i<param.options.length;i++){
@@ -261,6 +264,15 @@
                     });
                     newResult.push(...temp);
             };
+            let skuItemList=this.params.data.skus;
+            newResult.forEach(curItem=>{
+                let skuItem=skuItemList.find(item=>item.indexes==curItem.index);
+                if(skuItem){
+                    curItem.price=skuItem.price;
+                    curItem.stock=skuItem.stockVO.stock;
+                    curItem.enable=skuItem.enable;
+                }
+            });
             this.skuData=newResult;
         }
 
