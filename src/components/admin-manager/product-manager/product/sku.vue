@@ -19,7 +19,7 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-upload
-                                    v-if="props.row.isUsed"
+                                    v-if="props.row.enable"
                                     action="#"
                                     list-type="picture-card"
                                     :auto-upload="false">
@@ -95,6 +95,7 @@
     import ApiActions from '@/components/api/api-actions';
     @Component
     export default class Sku extends Vue{
+        @Prop() params;
         @goodsName.State addSpuSelectCategoryId;
         private isInit:boolean=true;
         public groupParams:Array<any>=new Array<any>();
@@ -133,6 +134,24 @@
         }
         @Watch("addSpuSelectCategoryId",{deep:true,immediate:true})
         private async addSkuSelectCategoryIdChange(newVal, oldVal){
+            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO){
+                let editData:any=JSON.parse(this.params.data.spuDetialVO.specifications);
+                this.groupParams=new Array<any>();
+                if(editData){
+                    editData.groupParams.forEach(item=>{
+                        item.params.forEach(paramItem=>{
+                            paramItem.group=item.group;
+                            if(!paramItem.generic){
+                                this.groupParams.push(paramItem);
+                            }
+                        })
+                    })
+                }
+            }else{
+                await this.genSkuParams(newVal, oldVal);
+            }
+        }
+        private async genSkuParams(newVal, oldVal){
             //根据分类查询参数模板
             let apiActions=new ApiActions(this);
             let result:any=(await apiActions.getTemplateByCid({categoryId:newVal})).data;

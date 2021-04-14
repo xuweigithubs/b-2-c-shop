@@ -14,6 +14,7 @@
     import {Component, Emit, Prop, Vue} from 'vue-property-decorator';
     @Component
     export default class SpuDescription extends Vue{
+         @Prop() params;
          private content:any="";
          private editorOption:any={};
          private descriptionFormRule:any={
@@ -22,6 +23,9 @@
              ]
          }
          created(){
+             if(this.params.spuId&&this.params.data.spuDetialVO){
+                 this.content=this.params.data.spuDetialVO.description;
+             }
          }
         private contentObj:any={};
         onEditorBlur(quill) {
@@ -39,7 +43,7 @@
 <style lang="less">
     .edit_container{
         .ql-container{
-          height: 200px!important;
+          height: 450px!important;
             overflow: auto;
         }
     }

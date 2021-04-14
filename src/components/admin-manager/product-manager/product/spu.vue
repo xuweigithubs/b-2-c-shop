@@ -16,6 +16,7 @@
     @Component
     export default class spu extends Vue{
         @goodsName.State addSpuSelectCategoryId;
+        @Prop() params;
         public groupParams:Array<any>=new Array<any>();
         private spuFormRule:any={
             v:[
@@ -24,56 +25,75 @@
         }
         @Watch("addSpuSelectCategoryId",{deep:true,immediate:true})
         private async addSpuSelectCategoryIdChange(newVal, oldVal){
+            this.addSpu(newVal, oldVal);
+        }
+        private async addSpu(newVal,oldVal){
             //根据分类查询参数模板
-            let apiActions=new ApiActions(this);
-            let result:any=(await apiActions.getTemplateByCid({categoryId:newVal})).data;
-            if(result&&result.length>0) {
-                let resultData:any=JSON.parse(result[0].specifications);
-                let groupData=resultData.groupParams;
-                //展示有分组的规格参数
-                let dataTemp:Array<any>=new Array<any>();
-                for(let i=0;i<groupData.length;i++){
-                     let params=groupData[i].params.map(item=>{
-                         return {
-                             group:groupData[i].group,
-                             k:item.name,
-                             v:'',
-                             numberic:item.numberic,
-                             generic:item.generic,
-                             searching:item.searching,
-                             segments:item.segments,
-                             unit:item.unit
-                         }
-                     });
-                    params.forEach(item=>{
-                        if(item.generic){
-                            dataTemp.push(item);
-                        }
-                    });
+            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO){
+                let editData:any=JSON.parse(this.params.data.spuDetialVO.specifications);
+                this.groupParams=new Array<any>();
+                if(editData){
+                    editData.groupParams.forEach(item=>{
+                        item.params.forEach(paramItem=>{
+                            paramItem.group=item.group;
+                            if(paramItem.generic){
+                                this.groupParams.push(paramItem);
+                            }
+                        })
+                    })
                 }
-                //展示没有分组的规格参数
-                if(resultData.params.length>0){
-                    let params=resultData.params.map(item=>{
-                        return {
-                            k:item.name,
-                            numberic:item.numberic,
-                            v:'',
-                            generic:item.generic,
-                            searching:item.searching,
-                            segments:item.segments,
-                            unit:item.unit
-                        }
-                    });
-                     params.forEach(item=>{
-                         if(item.generic){
-                             dataTemp.push(item);
-                         }
-                     });
-                };
-                this.groupParams=dataTemp;
             }else{
-                this.groupParams=[];
+                let apiActions=new ApiActions(this);
+                let result:any=(await apiActions.getTemplateByCid({categoryId:newVal})).data;
+                if(result&&result.length>0) {
+                    let resultData:any=JSON.parse(result[0].specifications);
+                    let groupData=resultData.groupParams;
+                    //展示有分组的规格参数
+                    let dataTemp:Array<any>=new Array<any>();
+                    for(let i=0;i<groupData.length;i++){
+                        let params=groupData[i].params.map(item=>{
+                            return {
+                                group:groupData[i].group,
+                                k:item.name,
+                                v:'',
+                                numberic:item.numberic,
+                                generic:item.generic,
+                                searching:item.searching,
+                                segments:item.segments,
+                                unit:item.unit
+                            }
+                        });
+                        params.forEach(item=>{
+                            if(item.generic){
+                                dataTemp.push(item);
+                            }
+                        });
+                    }
+                    //展示没有分组的规格参数
+                    if(resultData.params.length>0){
+                        let params=resultData.params.map(item=>{
+                            return {
+                                k:item.name,
+                                numberic:item.numberic,
+                                v:'',
+                                generic:item.generic,
+                                searching:item.searching,
+                                segments:item.segments,
+                                unit:item.unit
+                            }
+                        });
+                        params.forEach(item=>{
+                            if(item.generic){
+                                dataTemp.push(item);
+                            }
+                        });
+                    };
+                    this.groupParams=dataTemp;
+                }else{
+                    this.groupParams=[];
+                }
             }
+
         }
     }
 </script>

@@ -27,22 +27,22 @@
                   label="商品分类">
                 </el-table-column>
                 <el-table-column
-                        prop="categoryName"
+                        prop="brandName"
                         label="商品品牌">
                 </el-table-column>
                <el-table-column label="操作">
                   <template slot-scope="scope">
                   <el-button
                      icon="el-icon-edit"
-                     @click="updateGroup(scope.$index, scope.row)">编辑</el-button>
+                     @click="updateGood(scope.$index, scope.row)">编辑</el-button>
                   </template>
                </el-table-column>
             </el-table>
             <el-pagination
                @size-change="handleSizeChange"
                @current-change="handleCurrentChange"
-               :page-sizes="[10,100, 200, 300, 400]"
-               :page-size="10"
+               :page-sizes="[7,10,100, 200, 300, 400]"
+               :page-size="7"
                layout="total, sizes, prev, pager, next, jumper"
                :total="total">
             </el-pagination>
@@ -101,8 +101,14 @@ export default class ProductList extends Vue {
    private async searchByKey(searchText:any){
 
    }
+   //修改商品
+   private updateGood(index, row){
+        this.params.spuId=row.id;
+        this.productDialogVisible=true;
+   }
 
    private addProduct(){
+       this.params.spuId="";
        this.productDialogVisible=true;
    }
    private confirmDelete(){

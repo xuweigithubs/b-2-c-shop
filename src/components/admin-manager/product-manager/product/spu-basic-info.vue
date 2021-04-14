@@ -37,12 +37,19 @@
     import {namespace} from 'vuex-class'
     import ApiActions from '@/components/api/api-actions';
     const goodsName=namespace("goods");
+    import _ from "lodash";
     @Component
     export default class SpuBasicInfo extends Vue{
         @goodsName.Mutation updateState;
+        @Prop() params;
         private title="title";
         public categoryId:any="";
-        public ruleForm:any={};
+        public ruleForm:any={
+            subTitle:"",
+            title:"",
+            packingList:"",
+            afterService:""
+        };
         public rules:any={
             title: [
                 { required: true, message: '请填写商品名称', trigger: 'blur' }
@@ -62,6 +69,7 @@
         //根据分类查询出品牌
         private brandItems:Array<any>=new Array<any>();
         async created(){
+            //查询Spu基本信息
             let apiActions=new ApiActions(this);
             let categories=await apiActions.getCategories({});
             let categoryResult=this.mapCategory(categories.data);
@@ -75,6 +83,12 @@
             }else{
                 this.categoryId=["1020","1021","1025"];
                 this.updateState({addSpuSelectCategoryId:"1025"});
+            }
+            if(this.params.spuId){
+                this.ruleForm.title=_.cloneDeep(this.params.data.title);
+                this.ruleForm.subTitle=_.cloneDeep(this.params.data.subTitle);
+                this.ruleForm.packingList=_.cloneDeep(this.params.data.spuDetialVO.packingList);
+                this.ruleForm.afterService=_.cloneDeep(this.params.data.spuDetialVO.afterService);
             }
         }
         private async categoryChange(categories:any){
