@@ -119,9 +119,18 @@ export default class ApiActions {
         let result:any=await axios.post('mshop/api/gataway/manager/goods/save',spuParam);
         return result;
     }
+    //修改商品信息
+    async updateGood(spuParam:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/goods/update',spuParam);
+        return result;
+    }
     //按条件查询Spu
     async selectProduct(spuParam:any){
         let result:any=await axios.post('mshop/api/gataway/manager/goods/single',spuParam);
+        return result;
+    }
+    async deleteGoods(ids:Array<any>){
+        let result:any=await axios.post('mshop/api/gataway/manager/goods/delete',ids);
         return result;
     }
 

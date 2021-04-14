@@ -123,12 +123,12 @@
                    }
                });
            });
-           priceForm.validate((paramMainFormValid) =>{
+           priceForm&&priceForm.validate((paramMainFormValid) =>{
                if (!paramMainFormValid) {
                    hasErrorArray.push(true)
                }
            });
-           stockForm.validate((paramMainFormValid) =>{
+           stockForm&&stockForm.validate((paramMainFormValid) =>{
                if (!paramMainFormValid) {
                    hasErrorArray.push(true)
                }
@@ -217,10 +217,15 @@
            };
            //调用接口保存规格参数
            let apiActions=new ApiActions(this);
-           apiActions.saveGood(spuParams);
+           if(this.params.spuId){
+               spuParams.id=this.params.spuId;
+               apiActions.updateGood(spuParams);
+           }else{
+               apiActions.saveGood(spuParams);
+           }
+
            this.close();
        }
-
         mounted(){
             this.centerDialog();
         }

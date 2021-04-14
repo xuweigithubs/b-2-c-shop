@@ -12,7 +12,7 @@
          </div>
          <div class="productSpecGroupTable">
             <el-table
-               ref="specGroupTable"
+               ref="goodsTable"
                tooltip-effect="dark"
                :data="spus"
                >
@@ -78,7 +78,7 @@ export default class ProductList extends Vue {
   }
   private async initPageData(){
       let apiActions=new ApiActions(this);
-      let result:any=await apiActions.getSpuListPage({pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+      let result:any=await apiActions.getSpuListPage({title:this.searchKey,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
       this.spus=result.data.rows;
       this.total=result.data.total;
   }
@@ -93,13 +93,14 @@ export default class ProductList extends Vue {
        await this.initPageData();
    }
   //关闭
-   private close(){
-      this.productDialogVisible=false;
+   private async close(){
+       this.productDialogVisible=false;
+       await this.initPageData();
    }
 
    @Watch("searchKey")
    private async searchByKey(searchText:any){
-
+      this.initPageData();
    }
    //修改商品
    private updateGood(index, row){
@@ -111,8 +112,16 @@ export default class ProductList extends Vue {
        this.params.spuId="";
        this.productDialogVisible=true;
    }
-   private confirmDelete(){
-
+   private async confirmDelete(){
+       let apiActions=new ApiActions(this);
+       let goodsTables:any=this.$refs.goodsTable;
+       let selectData:Array<any>=goodsTables.selection;
+       let ids=new Array<any>();
+       selectData.forEach(item=>{
+           ids.push(item.id);
+       });
+       await apiActions.deleteGoods(ids);
+       await this.initPageData();
    }
    private confirm(){
 

@@ -203,7 +203,6 @@
                         }
                     });
                 };
-                //this.groupParams=dataTemp;
                 this.groupParamsChange(dataTemp);
             }else{
                 this.groupParams=[];
@@ -264,12 +263,12 @@
                     });
                     newResult.push(...temp);
             };
-            let skuItemList=this.params.data.skus;
+            let skuItemList=this.params&&this.params.data&&this.params.data.skus;
             newResult.forEach(curItem=>{
-                let skuItem=skuItemList.find(item=>item.indexes==curItem.index);
+                let skuItem=skuItemList&&skuItemList.find(item=>item.indexes==curItem.index);
                 if(skuItem){
-                    curItem.price=skuItem.price;
-                    curItem.stock=skuItem.stockVO.stock;
+                    curItem.price=Number(skuItem.price);
+                    curItem.stock=Number(skuItem.stockVO.stock);
                     curItem.enable=skuItem.enable;
                 }
             });
