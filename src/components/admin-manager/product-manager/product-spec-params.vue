@@ -220,6 +220,12 @@ export default class ProductSpecParam extends Vue {
       private relatedGroup(){
           let specParamTable:any=this.$refs.specParamTable;
           let selectData:Array<any>=specParamTable.selection;
+          if(selectData.length==0){
+              this.$alert('请选择数据', '提示', {
+                  confirmButtonText: '确定'
+              });
+              return false;
+          }
           this.isShowselectSpecGroup=true;
       }
       //确定关联

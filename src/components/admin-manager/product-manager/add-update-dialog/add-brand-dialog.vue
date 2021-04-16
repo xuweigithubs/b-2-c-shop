@@ -55,11 +55,11 @@ export default class BrandDialog extends Vue {
      ]
   }
   private handleAvatarSuccess(data){
-    this.imageUrl=data;
+    this.imageUrl=data.url;
     this.paramData={
-       orgUrl:data
+       orgUrl:data.url
      }
-    this.form.image=data;
+    this.form.image=data.url;
   }
   private beforeAvatarUpload(){
     
