@@ -156,7 +156,7 @@
                let index=0;
                let skuTitleStr="";
                for(let key  in item){
-                     if(key!="index"&&key!="enable"&&key!="price"&&key!="stock"){
+                     if(key!="index"&&key!="enable"&&key!="price"&&key!="stock"&&key!="images"){
                          ownSpec[key]=item[key];
                          skuTitleStr=skuTitleStr+item[key]+" "
                      }
@@ -165,7 +165,7 @@
                skus.push( {
                    spuId:"",
                    title:sluTitle,
-                   images:"",
+                   images:item.images,
                    price:item.price,
                    indexes:item.index,
                    ownSpec:JSON.stringify(ownSpec),

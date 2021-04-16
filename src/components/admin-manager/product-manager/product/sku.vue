@@ -19,10 +19,13 @@
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-upload
-                                    v-if="props.row.enable"
-                                    action="#"
+                                    v-show="props.row.enable"
+                                    action="/mshop/api/gataway/file/upload"
                                     list-type="picture-card"
-                                    :auto-upload="false">
+                                    :data="props.row"
+                                    :file-list="props.row.fileList"
+                                    :on-success="onSuccess"
+                                    :auto-upload="autoUpload">
                                 <i slot="default" class="el-icon-plus"></i>
                                 <div slot="file" slot-scope="{file}">
                                     <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -30,10 +33,7 @@
                                             <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
                                               <i class="el-icon-zoom-in"></i>
                                             </span>
-                                            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleDownload(file)">
-                                              <i class="el-icon-download"></i>
-                                            </span>
-                                            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                            <span v-show="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file,props.row)">
                                               <i class="el-icon-delete"></i>
                                             </span>
                                       </span>
@@ -97,6 +97,8 @@
     export default class Sku extends Vue{
         @Prop() params;
         @goodsName.State addSpuSelectCategoryId;
+        private fileList:Array<any>=new Array<any>();
+        private autoUpload:boolean=true;
         private isInit:boolean=true;
         public groupParams:Array<any>=new Array<any>();
         private skuFormRule:any={
@@ -122,15 +124,45 @@
         private dialogImageUrl='';
         private dialogVisible=false;
         private disabled=false;
-        handleRemove(file) {
+        handleRemove(file,curRow:any) {
+            let fileList=new Array<any>();
+            let images="";
+            curRow.fileList.forEach(item=>{
+                 if(file.url!=item.url){
+                     fileList.push(item);
+                     images=images+item.url+",";
+                 }
+            });
+            images=images.substring(0,images.length-1);
+            curRow.fileList=fileList;
+            curRow.images=images;
             console.log(file);
         }
         handlePictureCardPreview(file) {
             this.dialogImageUrl = file.url;
             this.dialogVisible = true;
         }
-        handleDownload(file) {
-            console.log(file);
+        handleDownload(curRow:any) {
+            console.log(curRow);
+        }
+        private onSuccess(response, file, fileListResult){
+            let skuItem=this.skuData.find(item=>item.index==response.index);
+            if(skuItem){
+                let list=new Array<any>();
+                let fileList=skuItem.fileList?skuItem.fileList:list;
+                let images="";
+                fileListResult.forEach(item=>{
+                    if(item.response){
+                        fileList.push(item.response);
+                        images=images+item.response.url+",";
+                    }else{
+                        images=images+item.url+",";
+                    }
+                });
+                images=images.substring(0,images.length-1);
+                skuItem.images=images;
+                skuItem.fileList=fileList;
+            };
         }
         @Watch("addSpuSelectCategoryId",{deep:true,immediate:true})
         private async addSkuSelectCategoryIdChange(newVal, oldVal){
@@ -270,6 +302,18 @@
                     curItem.price=Number(skuItem.price);
                     curItem.stock=Number(skuItem.stockVO.stock);
                     curItem.enable=skuItem.enable;
+                    if(skuItem.images){
+                        let imgItems=skuItem.images.split(",");
+                        let fileList=new Array<any>();
+                        let images="";
+                        imgItems.forEach(item=>{
+                            fileList.push({name:"",url:item});
+                            images=images+item+",";
+                        });
+                        images=images.substring(0,images.length-1);
+                        curItem.images=images;
+                        curItem.fileList=fileList;
+                    }
                 }
             });
             this.skuData=newResult;

@@ -116,6 +116,12 @@ export default class ProductList extends Vue {
        let apiActions=new ApiActions(this);
        let goodsTables:any=this.$refs.goodsTable;
        let selectData:Array<any>=goodsTables.selection;
+       if(selectData.length==0){
+           this.$alert('请选择数据', '提示', {
+               confirmButtonText: '确定'
+           });
+           return false;
+       }
        let ids=new Array<any>();
        selectData.forEach(item=>{
            ids.push(item.id);
