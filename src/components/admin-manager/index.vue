@@ -49,6 +49,12 @@
                         {index:"1-4",name:"规格参数管理",click:this.goSpecParam},
                         {index:"1-5",name:"管理商品列表",click:this.goProductList}
                     ]
+                },
+                {index:"2",name:"首页CMS管理","elSubmenus":
+                        [
+                            {index:"2-1",name:"CMS分类管理",click:this.goCmsCategoryList},
+                            {index:"2-2",name:"CMS内容管理",click:this.goCmsContentList}
+                        ]
                 }
             ];
         }
@@ -162,6 +168,40 @@
                 });
             }
         }
+         //跳转到内容分类列表
+          private goCmsCategoryList(data?:any): any {
+              if(data){
+                  localStorage.setItem("index_cache",data.index)
+              };
+              this.$router.push({  // 核心语句
+                  path: '/admin/cmsCategoryList',// 跳转的路径
+                  query: {
+                      id: '0',
+                  },
+              });
+              if(data){
+                  this.$nextTick(()=>{
+                      this.openIndex=data.$parent.index;
+                  });
+               }
+          }
+          //跳转到内容管理
+          private goCmsContentList(data?:any): any {
+              if(data){
+                  localStorage.setItem("index_cache",data.index)
+              };
+              this.$router.push({  // 核心语句
+                  path: '/admin/cmsContentList',// 跳转的路径
+                  query: {
+                      id: '0',
+                  },
+              });
+              if(data){
+                  this.$nextTick(()=>{
+                      this.openIndex=data.$parent.index;
+                  });
+              }
+          }
       }
   </script>
   <style>

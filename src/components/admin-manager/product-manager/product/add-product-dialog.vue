@@ -32,6 +32,7 @@
     import SpuBasicInfo from "./spu-basic-info.vue";
     import SpuDescription from "./spu-description.vue";
     import ApiActions from '@/components/api/api-actions';
+    import _ from 'lodash';
     @Component({
         components:{
             Sku,
@@ -182,12 +183,12 @@
            let spuData=spuRef.groupParams;
            let skuData=skuDataRef.groupParams;
            let allParams=[...spuData,...skuData];
-           let groupSet=new Set();
+           const groupSet:any=new Set();
            allParams.forEach(item=>{
                groupSet.add(item.group);
            });
-           let groupArray=Array.from(groupSet);
-           let groupSpecifications=new Array<any>();
+           let groupArray=(Array as any).from(groupSet);
+           let groupSpecifications=new Array();
            groupArray.forEach(item=>{
                let params=allParams.filter(curItem=>curItem.group==item);
                groupSpecifications.push({group:item,params:params});

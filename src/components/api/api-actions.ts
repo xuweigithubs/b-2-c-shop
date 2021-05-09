@@ -133,6 +133,74 @@ export default class ApiActions {
         let result:any=await axios.post('mshop/api/gataway/manager/goods/delete',ids);
         return result;
     }
-
+    async addJdCategories(){
+        let result:any=await axios.get('mshop/api/gataway/manager/jdcategory/get');
+        return result;
+    }
+    //分页查询首页CMS分类信息
+    async getCmsCategoryPage(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/page/list',params);
+        return result;
+    }
+    //不分页查询
+    async getCmsCategory(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/list',params);
+        return result;
+    }
+    //分页查询CMS内容信息
+    async getCmsContentPage(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/page/list',params);
+        return result;
+    }
+    //不分页查询cms信息
+    async getCmsContent(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/list',params);
+        return result;
+    }
+    //添加cms分类信息
+    async addCmsCategory(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/add',params);
+        return result;
+    }
+    //批量添加cms信息
+    async addCmsCategoryBatch(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/add/batch',params);
+        return result;
+    }
+    //添加cms信息
+    async addCmsContent(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/add',params);
+        return result;
+    }
+    //批量添加cms信息
+    async addCmsContentBatch(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/add/batch',params);
+        return result;
+    }
+    //修改cms分类信息
+    async updateCmsCategoryContent(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/update',params);
+        return result;
+    }
+    //修改cms信息
+    async updateCmsContent(params:any){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/update',params);
+        return result;
+    }
+    //删除cms分类信息
+    async deleteCmsCategory(ids:[]){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/category/content/delete',ids);
+        return result;
+    }
+    //删除cms信息
+    async deleteCmsContent(ids:[]){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/content/delete',ids);
+        return result;
+    }
+    //同步京东cms信息
+    async asyncJdCmsData(){
+        let result:any=await axios.post('mshop/api/gataway/manager/cms/async/jdcmsdata');
+        return result;
+    }
 }
 

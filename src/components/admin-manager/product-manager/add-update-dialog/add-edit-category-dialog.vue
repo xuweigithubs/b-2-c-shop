@@ -8,9 +8,14 @@
                 <el-form-item label="排序号" :label-width="formLabelWidth" prop="sort">
                   <el-input v-model="form.sort" autocomplete="off"></el-input>
                </el-form-item>
-                <el-form-item label="是否父节点" style="margin-left:40px;margin-bottom:0px">
-                  <el-switch v-model="form.parent"></el-switch>
-                </el-form-item>
+                <div class="isFatherOrChannl">
+                    <el-form-item label="是否父节点" style="margin-left:40px;margin-bottom:0px">
+                        <el-switch v-model="form.parent"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="是否频道节点" style="margin-left:40px;margin-bottom:0px">
+                        <el-switch v-model="form.channel"></el-switch>
+                    </el-form-item>
+                </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
                <el-button @click="close">取 消</el-button>
@@ -32,7 +37,8 @@ export default class CategoryDialog extends Vue {
   private form:any= {
       name: '',
       sort:'',
-      parent:false
+      parent:false,
+      channel:false
   }
   //表单校验
   private rules:any={
@@ -49,6 +55,7 @@ export default class CategoryDialog extends Vue {
      this.form.name=this.params.name;
      this.form.sort=this.params.sort;
      this.form.parent=this.params.parent;
+     this.form.channel=this.params.channel;
      this.form.parentId=this.params.parentId;
      this.centerDialog();
   }
@@ -76,10 +83,10 @@ export default class CategoryDialog extends Vue {
   private async confirmSave(){
       let apiActions=new ApiActions(this);
       if(this.params.type=="add"){
-         await apiActions.addCategory({name:this.form.name,sort:this.form.sort,parent:this.form.parent,parentId:this.form.parentId});
+         await apiActions.addCategory({name:this.form.name,channel:this.form.channel,sort:this.form.sort,parent:this.form.parent,parentId:this.form.parentId?this.form.parentId:0});
       }
       if(this.params.type=="update"){
-         await apiActions.updateCategory({id:this.params.id,name:this.form.name,sort:this.form.sort,parent:this.form.parent});
+         await apiActions.updateCategory({id:this.params.id,channel:this.form.channel,name:this.form.name,sort:this.form.sort,parent:this.form.parent});
       }
       this.confirm();
   }
@@ -106,6 +113,9 @@ export default class CategoryDialog extends Vue {
        .el-dialog__body{
           padding-bottom: 0px;
        }
+        .isFatherOrChannl{
+            display: flex;
+        }
         .el-dialog{
             width: 40%;
             margin-top:0px!important;

@@ -66,7 +66,7 @@ export default class SelectCategory extends Vue {
         })
   }
   private cacheCheck(categoryId:any){
-      let searchResult=new Array<any>();
+      let searchResult:any=new Array<any>();
       TreeUtils.expendTreeData(this.productCategoryData,searchResult);
       let currentItem=searchResult.find(item=>item.id==categoryId);
       let fatherItems=new Array<any>();

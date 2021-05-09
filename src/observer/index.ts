@@ -12,9 +12,5 @@ export default function test(){
          console.log("XXXXX",val);
     });
     obj.b.c=4;
-
 }
-
-
-
 

@@ -2,7 +2,9 @@
    <div class="productCategoryIndex">
       <add-edit-category-dialog :params="params" @close="close" @confirm="confirm" v-if="categoryDialogVisible"/>
       <div class="butons"> 
-            <el-button icon="el-icon-plus" @click="addCategory">添加</el-button>
+          <el-button icon="el-icon-plus" @click="addCategory">添加</el-button>
+          <el-button icon="el-icon-plus" @click="addFatherCategory">添加顶级分类</el-button>
+          <el-button icon="el-icon-plus" @click="addJdCategory">同步京东分类</el-button>
             <el-input style="flex:1;margin-left:300px"
                 placeholder="请输入名称搜索"
                 prefix-icon="el-icon-search"
@@ -35,6 +37,13 @@
                         {{ scope.row.parent?"是":"否" }}
                    </template>
                </el-table-column>
+                <el-table-column
+                        prop="channel"
+                        label="是否频道节点">
+                    <template slot-scope="scope">
+                        {{ scope.row.channel==1?"是":"否" }}
+                    </template>
+                </el-table-column>
                <el-table-column label="操作">
                   <template slot-scope="scope">
                   <el-button
@@ -122,13 +131,30 @@ export default class ProductCategory extends Vue {
          this.params.name="";
          this.params.sort="";
          this.params.id="";
+          this.params.channel=false;
          this.params.parent=false;
          let treeTable:any=this.$refs.treeTable;
          let selectData:Array<any>=treeTable.selection;
          this.params.parentId=this.currentRow.id;
          this.categoryDialogVisible=true;
-      }    
-     
+      }
+
+      private addFatherCategory(){
+          this.params.type="add";
+          this.params.name="";
+          this.params.sort="";
+          this.params.id="";
+          this.params.channel=false;
+          this.params.parent=0;
+          let treeTable:any=this.$refs.treeTable;
+          let selectData:Array<any>=treeTable.selection;
+          this.params.parentId=this.currentRow.id;
+          this.categoryDialogVisible=true;
+      }
+      private async addJdCategory(){
+          let apiActions=new ApiActions(this);
+          let result=await apiActions.addJdCategories()
+      }
       //修改分类
       private updateCategory(index,item){
          this.params.type="update";
@@ -136,6 +162,7 @@ export default class ProductCategory extends Vue {
          this.params.sort=item.sort;
          this.params.id=item.id;
          this.params.parent=item.parent;
+         this.params.channel=item.channel;
          this.params.parentId="";
          this.categoryDialogVisible=true;
          this.$nextTick(()=>{
