@@ -50,7 +50,7 @@
                             prop="price"
                             label="价格">
                         <template slot-scope="scope">
-                            <el-form :model="scope.row" :rules="priceFormRule"  :key="scope.row.index"   ref="priceForm">
+                            <el-form :model="scope.row" :rules="priceFormRule" :key="scope.row.index" ref="priceForm">
                                 <el-form-item label-width="20px"  prop="price" label="">
                                     <el-input v-model.number="scope.row.price"></el-input>
                                 </el-form-item>
@@ -61,7 +61,7 @@
                             prop="stock"
                             label="库存">
                         <template slot-scope="scope">
-                            <el-form :model="scope.row" :rules="stockFormRule"  :key="scope.row.index"   ref="stockForm">
+                            <el-form :model="scope.row" :rules="stockFormRule" :key="scope.row.index" ref="stockForm">
                                 <el-form-item label-width="20px"  prop="stock" label="">
                                     <el-input v-model.number="scope.row.stock"></el-input>
                                 </el-form-item>
@@ -72,7 +72,7 @@
                             prop="isUsed"
                             label="是否启用">
                         <template slot-scope="scope">
-                            <el-form :model="scope.row" :rules="priceFormRule"  :key="scope.row.index"   ref="isUsedForm">
+                            <el-form :model="scope.row" :rules="priceFormRule" :key="scope.row.index" ref="isUsedForm">
                                 <el-form-item label-width="20px"  label="">
                                     <el-switch
                                             v-model="scope.row.enable"
@@ -166,7 +166,7 @@
         }
         @Watch("addSpuSelectCategoryId",{deep:true,immediate:true})
         private async addSkuSelectCategoryIdChange(newVal, oldVal){
-            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO){
+            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO&&this.params.data.spuDetialVO.specifications){
                 let editData:any=JSON.parse(this.params.data.spuDetialVO.specifications);
                 let groupParams=new Array<any>();
                 if(editData){
@@ -251,50 +251,35 @@
               //这里面对校验信息进行封装
              this.skuData=new Array<any>();
              for(let i=0;i<groupParams.length;i++){
-                 if(i==0){
-                     this.genSkuItems(groupParams[i]);
-                 }else{
-                     this.genPlusSkuItems(groupParams[i]);
-                 }
+                  this.genPlusSkuItems(groupParams[i]);
              }
              this.groupParams=groupParams;
         }
-        genSkuItems(param:any){
-            for(let i=0;i<param.options.length;i++){
-                let k:any=param.k;
-                let v=param.options[i].v;
-                let skuDataItem:any={};
-                skuDataItem[k]=v;
-                if(skuDataItem.index==undefined){
-                    skuDataItem.index=param.options[i].index;
-                }else{
-                    skuDataItem.index=param.options[i].index+"-"+skuDataItem.index;
-                }
-                if(v){
-                    this.skuData.push(skuDataItem);
-                }
-            }
-        }
-
+        //生成sku列表
         private genPlusSkuItems(param){
             let temp: any;
-            let skuLength = this.skuData.length;
+            let tempSkuData = _.cloneDeep(this.skuData);
+            this.skuData=new Array<any>();
+            let skuLength = tempSkuData.length;
             let opLength = param.options.length;
             let newResult = new Array<any>();
             for (let i = 0; i < opLength; i++) {
-                    temp = _.cloneDeep(this.skuData);
-                    temp.forEach(item=>{
-                        let k:any=param.k;
-                        let v=param.options[i].v;
-                        item[k]=v;
-                        if(item.index==undefined){
+                    if(tempSkuData.length>0){
+                          for(let j=0;j<tempSkuData.length;j++){
+                                  let item:any= _.cloneDeep(tempSkuData[j]);
+                                  item[param.k]=param.options[i].v;
+                                  item.index=item.index+"-"+param.options[i].index;
+                                  newResult.push(item);
+                          }
+                    }else{
+                            let item:any={};
+                            item[param.k]=param.options[i].v
                             item.index=param.options[i].index;
-                        }else{
-                            item.index=param.options[i].index+"-"+item.index;
-                        }
-                    });
-                    newResult.push(...temp);
+                            newResult.push(item);
+                    }
+
             };
+
             let skuItemList=this.params&&this.params.data&&this.params.data.skus;
             newResult.forEach(curItem=>{
                 let skuItem=skuItemList&&skuItemList.find(item=>item.indexes==curItem.index);

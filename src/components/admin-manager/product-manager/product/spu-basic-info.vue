@@ -87,8 +87,10 @@
             if(this.params.spuId){
                 this.ruleForm.title=_.cloneDeep(this.params.data.title);
                 this.ruleForm.subTitle=_.cloneDeep(this.params.data.subTitle);
-                this.ruleForm.packingList=_.cloneDeep(this.params.data.spuDetialVO.packingList);
-                this.ruleForm.afterService=_.cloneDeep(this.params.data.spuDetialVO.afterService);
+                if(this.params.data.spuDetialVO){
+                    this.ruleForm.packingList=_.cloneDeep(this.params.data.spuDetialVO.packingList);
+                    this.ruleForm.afterService=_.cloneDeep(this.params.data.spuDetialVO.afterService);
+                }
             }
         }
         private async categoryChange(categories:any){

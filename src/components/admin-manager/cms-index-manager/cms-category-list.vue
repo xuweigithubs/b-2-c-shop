@@ -34,7 +34,7 @@
                @size-change="handleSizeChange"
                @current-change="handleCurrentChange"
                :page-sizes="[5,10,100, 200, 300, 400]"
-               :page-size="5"
+               :page-size="100"
                layout="total, sizes, prev, pager, next, jumper"
                :total="total">
             </el-pagination>
@@ -60,7 +60,7 @@ export default class ProductBrand extends Vue {
   private formLabelWidth:any='120px'
   private params:any={};
   private currentPage:number=1;
-  private pageSize:number=5;
+  private pageSize:number=100;
   private isSHowSelectCategory:boolean=false;
   private dialogStyle:any={};
   //创建时调用
@@ -77,14 +77,14 @@ export default class ProductBrand extends Vue {
   private async handleSizeChange(pageSize){
      this.pageSize=pageSize;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
   }
   //当前页发生变化
   private async handleCurrentChange(currentPage){
      this.currentPage=currentPage;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
   }
   //添加分组
@@ -137,13 +137,13 @@ export default class ProductBrand extends Vue {
         return item.id;
      });
      await apiActions.deleteBrand(ids);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }
   private async confirmSaveRls(){
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
      this.isSHowSelectCategory=false; 
@@ -157,7 +157,7 @@ export default class ProductBrand extends Vue {
   private async confirm(){
      this.brandDialogVisible = false;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }
@@ -166,7 +166,7 @@ export default class ProductBrand extends Vue {
    private async searchByKey(searchText:any){
      console.log("searchText",searchText);
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:searchText,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsCategoryPage({name:searchText,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }

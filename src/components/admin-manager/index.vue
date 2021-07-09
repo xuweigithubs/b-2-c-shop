@@ -1,13 +1,13 @@
 <template>
-    <el-container style="height: 100%;">
+    <el-container style="height: 100%;" v-if="isShowPage">
       <el-header style="text-align: right; font-size: 12px;background-color:#E7EDF4">
-          <el-dropdown>
-            <i class="el-icon-setting" style="margin-right: 15px"></i>
+          <el-dropdown @menu-item-click="unLogin">
+            <i class="el-icon-setting" style="margin-right:15px"></i>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>退出登录</el-dropdown-item>
+                <el-dropdown-item >退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-         <span>王小虎</span>
+         <span>{{username}}</span>
       </el-header>
       <el-container  style="height:calc(100% - 80px);">
         <el-aside width="250px"  style="height: 100%;background-color: #E7EDF4">
@@ -32,14 +32,18 @@
     </el-container>
 </template>
 <script lang="ts">
-      import {Component, Vue} from 'vue-property-decorator'
+      import {Component, Vue} from 'vue-property-decorator';
+      import ApiActions from '@/components/api/api-actions'
       @Component
       export default class ProductManager extends Vue {
         private isShow: any = false;
         private menums=new Array<any>();
         private index_cache:any="1-1";
         private openIndex="1";
-        created(){
+        private isShowPage=false;
+        private username:any="";
+        async created(){
+            this.isShowPage=true;
             this.menums=[
                 {index:"1",name:"商品管理","elSubmenus":
                     [
@@ -58,18 +62,35 @@
                 }
             ];
         }
-        mounted(){
-             let index_cache:any=localStorage.getItem("index_cache");
-             let menums=this.menums;
-             if(index_cache){
-                 this.index_cache=index_cache;
-                 let cacheItem=this.findCacheIndex(menums,index_cache);
-                 if(cacheItem){
-                     cacheItem.click();
-                 }
-             }else{
-                 this.goCategory();
-             }
+        async mounted(){
+            let apiActions = new ApiActions(this);
+            try {
+                let userInfo:any=await apiActions.verify();
+                this.username=userInfo.data.username;
+                let index_cache:any=localStorage.getItem("index_cache");
+                let menums=this.menums;
+                if(index_cache){
+                    this.index_cache=index_cache;
+                    let cacheItem=this.findCacheIndex(menums,index_cache);
+                    if(cacheItem){
+                        cacheItem.click();
+                    }
+                }else{
+                    this.goCategory();
+                }
+            } catch (e) {
+                this.$router.push({
+                    path: '/login',
+                });
+            };
+
+        }
+        private async unLogin(){
+            let apiActions = new ApiActions(this);
+            await apiActions.unLogin();
+            this.$router.push({
+                path: '/login',
+            });
         }
         private findCacheIndex(menums,index_cache){
              let itemMenu:any=menums&&menums.find(item=>item.index==index_cache);
@@ -232,6 +253,12 @@
         /*滚动条里面小方块*/
         background-color: #B3C0D1;
     }
+    .el-container{
+        background-color: white;
+    }
+      .el-dropdown-menu{
+          top: 40px!important;
+      }
 
 
   </style>

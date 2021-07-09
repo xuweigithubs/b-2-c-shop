@@ -1,18 +1,22 @@
 const path = require('path');
+const { resolve } = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'development',
-    entry: "./src/main.ts",
+    target: ['web', 'es5'],
+    entry: {
+        app:['babel-polyfill', './src/main.ts']
+    },
     devServer: {
         contentBase: './dist',
         proxy: {
             '/mshop/api/gataway': {
-                target: 'http://localhost:8089',
+                target: 'http://127.0.0.1:10010',
                 changeOrigin: true,
                 pathRewrite: {
-                    'mshop/api/gataway': ''
+                    'mshop/api/gataway': '/api/'
                 }
             }
         },
@@ -25,6 +29,9 @@ module.exports = {
     output: {
         filename: "bundle.js",
         path: path.resolve(__dirname, "dist"),
+        environment: {
+            arrowFunction: false
+        }
     },
     resolve: {
         extensions: ['.js','.vue','.json','.ts'],
@@ -67,7 +74,12 @@ module.exports = {
                     }
                 ],
                 exclude:/node_modules/
-            }
+            },
+            // {
+            //     test: /\.ts$/,
+            //     loader: 'babel-loader',
+            //     include: [resolve('src'), resolve('node_modules/webpack-dev-server/client')]
+            // }
         ],
     },
     resolveLoader: {

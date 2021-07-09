@@ -29,7 +29,7 @@
         }
         private async addSpu(newVal,oldVal){
             //根据分类查询参数模板
-            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO){
+            if(this.params.spuId&&this.params.data&&this.params.data.spuDetialVO&&this.params.data.spuDetialVO.specifications){
                 let editData:any=JSON.parse(this.params.data.spuDetialVO.specifications);
                 this.groupParams=new Array<any>();
                 if(editData){

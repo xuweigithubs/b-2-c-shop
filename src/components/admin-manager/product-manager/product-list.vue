@@ -23,7 +23,18 @@
                   label="商品名称">
                </el-table-column>
                 <el-table-column
-                  prop="categoryName"
+                        prop="spuImage"
+                        label="商品图片">
+                    <template slot-scope="scope" v-if="scope.row.spuImage">
+                        <img  :src="scope.row.spuImage" style="width:400px;height:200px"/>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="spuPrice"
+                        label="商品单价">
+                </el-table-column>
+                <el-table-column
+                  prop="categoryName3"
                   label="商品分类">
                 </el-table-column>
                 <el-table-column

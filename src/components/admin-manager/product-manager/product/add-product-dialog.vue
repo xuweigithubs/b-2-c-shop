@@ -157,18 +157,23 @@
                let index=0;
                let skuTitleStr="";
                for(let key  in item){
-                     if(key!="index"&&key!="enable"&&key!="price"&&key!="stock"&&key!="images"){
+                     if(
+                           key!="index"&&key!="enable"&&key!="price"
+                           &&key!="stock"&&key!="images"&&key!="enable"
+                           &&key!="fileList"
+                      ){
                          ownSpec[key]=item[key];
                          skuTitleStr=skuTitleStr+item[key]+" "
                      }
                }
-               let sluTitle=ruleForm.title+" "+skuTitleStr;
+               let sluTitle=ruleForm.title;
                skus.push( {
                    spuId:"",
                    title:sluTitle,
                    images:item.images,
                    price:item.price,
                    indexes:item.index,
+                   ownSpecDesc:skuTitleStr,
                    ownSpec:JSON.stringify(ownSpec),
                    enable:item.enable,
                    stockVO:{

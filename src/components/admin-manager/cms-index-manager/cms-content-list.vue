@@ -27,14 +27,18 @@
                 </el-table-column>
                <el-table-column
                   prop="pic"
+                  width="500px"
                   label="内容图片">
-                     <template slot-scope="scope">
-                             <img :src="scope.row.image" style="width:100px;height:100px"/>
+                     <template slot-scope="scope" v-if="scope.row.pic">
+                             <img v-for="(pic,index) in scope.row.picList" :key="index" :src="pic" style="width:400px;height:200px"/>
                      </template>
                </el-table-column>
                 <el-table-column
                   prop="url"
                   label="内容超链接地址">
+                    <template slot-scope="scope" v-if="scope.row.url">
+                        <a :href="scope.row.url" target="_blank">{{scope.row.url?scope.row.url.substring(0,100):""}}...</a>
+                    </template>
                </el-table-column>
                 <el-table-column
                         prop="sortOrder"
@@ -56,7 +60,7 @@
                @size-change="handleSizeChange"
                @current-change="handleCurrentChange"
                :page-sizes="[5,10,100, 200, 300, 400]"
-               :page-size="5"
+               :page-size="100"
                layout="total, sizes, prev, pager, next, jumper"
                :total="total">
             </el-pagination>
@@ -84,7 +88,7 @@ export default class ProductBrand extends Vue {
   private formLabelWidth:any='120px'
   private params:any={};
   private currentPage:number=1;
-  private pageSize:number=5;
+  private pageSize:number=100;
   private isSHowSelectCategory:boolean=false;
   private dialogStyle:any={};
   //创建时调用
@@ -101,14 +105,14 @@ export default class ProductBrand extends Vue {
   private async handleSizeChange(pageSize){
      this.pageSize=pageSize;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
   }
   //当前页发生变化
   private async handleCurrentChange(currentPage){
      this.currentPage=currentPage;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
   }
   //添加分组
@@ -157,13 +161,13 @@ export default class ProductBrand extends Vue {
         return item.id;
      });
      await apiActions.deleteBrand(ids);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }
   private async confirmSaveRls(){
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
      this.isSHowSelectCategory=false; 
@@ -177,7 +181,7 @@ export default class ProductBrand extends Vue {
   private async confirm(){
      this.brandDialogVisible = false;
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:"",pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }
@@ -186,7 +190,7 @@ export default class ProductBrand extends Vue {
    private async searchByKey(searchText:any){
      console.log("searchText",searchText);
      let apiActions=new ApiActions(this);
-     let result=await apiActions.getBrandPage({name:searchText,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
+     let result=await apiActions.getCmsContentPage({name:searchText,pager:{pageSize:this.pageSize,currentPage:this.currentPage}});
      this.brandData=result.data.rows;
      this.total=result.data.total;
   }

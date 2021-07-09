@@ -67,7 +67,7 @@ export default class BrandDialog extends Vue {
   private formLabelWidth:any='120px'
   //创建时调用
   async created(){
-    if(this.params.type="update"){
+    if(this.params.type==="update"){
         this.form.id=this.params.id;
         this.form.name=this.params.name;
         this.form.letter=this.params.letter;

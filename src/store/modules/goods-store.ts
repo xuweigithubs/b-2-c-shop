@@ -1,5 +1,6 @@
 const state = {
-    addSpuSelectCategoryId:""
+    addSpuSelectCategoryId:"",
+    cartItemsCount:0
 }
 const mutations = {
     updateState(state: any, payload: any) {
